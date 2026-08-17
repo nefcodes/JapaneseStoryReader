@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NihongoFlow — Japanese Immersion Reader</title>
+<style>
+  :root{
+    --fs: 22px;
+    --bg1:#0d0f14; --bg2:#151a24;
+    --text:#e8eaf0; --dim:#8b93a7; --accent:#7aa2ff; --accent2:#ffd479;
+    --glass: rgba(28,30,38,.62);
+    --glass-border: rgba(255,255,255,.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Yu Gothic',-apple-system,'Noto Sans JP',sans-serif;
+    background:radial-gradient(1200px 800px at 70% -10%, #1c2436 0%, var(--bg1) 55%), var(--bg1);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  header{
+    position:sticky; top:0; z-index:50;
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    padding:14px 20px;
+    background:rgba(13,15,20,.72);
+    backdrop-filter:blur(24px) saturate(160%);
+    -webkit-backdrop-filter:blur(24px) saturate(160%);
+    border-bottom:1px solid rgba(255,255,255,.07);
+  }
+  .logo{font-weight:700; letter-spacing:.4px; font-size:15px; margin-right:4px; white-space:nowrap;}
+  .logo span{color:var(--accent);}
+  #url{
+    flex:1; min-width:220px;
+    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+    border-radius:10px; padding:9px 13px; color:var(--text); font-size:13.5px; outline:none;
+    transition:border-color .15s;
+  }
+  #url:focus{border-color:var(--accent);}
+  button{
+    background:var(--accent); border:none; color:#0c1222; font-weight:600;
+    padding:9px 16px; border-radius:10px; cursor:pointer; font-size:13.5px;
+    transition:filter .15s;
+  }
+  button:hover{filter:brightness(1.12);}
+  button.ghost{
+    background:rgba(255,255,255,.08); color:var(--text); border:1px solid rgba(255,255,255,.12); font-weight:500;
+  }
+  .ctl{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--dim); white-space:nowrap;}
+  .ctl input[type=checkbox]{accent-color:var(--accent); width:15px; height:15px;}
+  .fsbtn{padding:6px 10px; font-size:12px;}
+
+  main{max-width:760px; margin:0 auto; padding:34px 24px 220px;}
+  #status{color:var(--dim); font-size:14px; line-height:1.7; padding:30px 6px; text-align:center; white-space:pre-line;}
+  #status .hint{font-size:12.5px; opacity:.75;}
+  #log{
+    display:none; margin:0 0 18px; padding:12px 14px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09);
+    border-radius:10px; font-family:ui-monospace,'SF Mono',Menlo,monospace;
+    font-size:11px; line-height:1.7; color:var(--dim); max-height:180px; overflow-y:auto;
+  }
+  #log .ok{color:#4ade80;} #log .err{color:#f87171;}
+  #vtitle{font-size:16px; font-weight:600; color:var(--dim); margin-bottom:22px; line-height:1.5;}
+  .line{
+    display:flex; gap:16px; align-items:baseline;
+    padding:14px 16px; margin:4px -16px; border-radius:12px;
+    font-size:var(--fs); line-height:1.95; cursor:pointer;
+    transition:background .15s;
+  }
+  .line:hover{background:rgba(255,255,255,.045);}
+  .line.active{background:rgba(122,162,255,.12); box-shadow:inset 2px 0 0 var(--accent);}
+  .ts{
+    font-family:ui-monospace,'SF Mono',Menlo,monospace;
+    font-size:11.5px; color:var(--dim); min-width:44px; flex-shrink:0;
+    opacity:.7; user-select:none; transform:translateY(-2px);
+  }
+  .w{cursor:pointer; border-radius:5px; padding:0 1px; transition:background .12s;}
+  .w:hover{background:rgba(255,212,121,.28);}
+
+  #popup{
+    position:fixed; z-index:100; width:340px; max-width:calc(100vw - 24px);
+    background:var(--glass);
+    backdrop-filter:blur(34px) saturate(180%);
+    -webkit-backdrop-filter:blur(34px) saturate(180%);
+    border:1px solid var(--glass-border);
+    border-radius:16px;
+    box-shadow:0 18px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.09);
+    padding:16px 18px;
+    opacity:0; pointer-events:none; transform:translateY(6px) scale(.98);
+    transition:opacity .16s ease, transform .16s ease;
+  }
+  #popup.show{opacity:1; pointer-events:auto; transform:translateY(0) scale(1);}
+  .p-head{display:flex; gap:14px; align-items:flex-start;}
+  .p-main{flex:1; min-width:0;}
+  .p-word{font-size:26px; font-weight:700; line-height:1.3;}
+  .p-reading{color:var(--accent2); font-size:14px; margin-top:2px;}
+  .p-pos{
+    display:inline-block; margin-top:7px; font-size:10.5px; letter-spacing:.5px;
+    color:var(--accent); background:rgba(122,162,255,.14);
+    border:1px solid rgba(122,162,255,.3); padding:2px 8px; border-radius:20px;
+  }
+  .p-img{
+    width:88px; height:88px; flex-shrink:0; border-radius:12px; object-fit:cover;
+    border:1px solid rgba(255,255,255,.15); box-shadow:0 4px 14px rgba(0,0,0,.35);
+    display:none;
+  }
+  .p-senses{margin-top:12px; font-size:13.5px; line-height:1.55; color:var(--text);}
+  .p-senses .sense{margin-bottom:7px; display:flex; gap:8px;}
+  .p-senses .n{color:var(--dim); font-size:11px; flex-shrink:0; transform:translateY(2px);}
+  .p-senses .sp{display:block; color:var(--dim); font-size:10.5px; margin-top:1px;}
+  .p-loading{color:var(--dim); font-size:12.5px; margin-top:10px;}
+
+  #playerWrap{
+    position:fixed; right:18px; bottom:18px; z-index:60;
+    width:336px; border-radius:14px; overflow:hidden;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 16px 44px rgba(0,0,0,.55);
+    background:#000;
+    display:none;
+  }
+  #playerWrap.mini iframe, #playerWrap.mini #player{display:none;}
+  #playerWrap.mini{width:auto;}
+  #pbar{
+    display:flex; justify-content:flex-end; align-items:center;
+    background:rgba(20,22,30,.9); padding:5px 8px; gap:6px;
+  }
+  #pbar b{font-size:11px; color:var(--dim); font-weight:500; margin-right:auto; padding-left:4px;}
+  #pbar button{padding:3px 9px; font-size:11px; border-radius:7px;}
+  #player{width:336px; height:189px; border:0; display:block;}
+
+  #fallback{display:none; margin-top:18px;}
+  #fallback textarea{
+    width:100%; height:150px; background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12); border-radius:12px;
+    color:var(--text); padding:12px; font-size:13px; resize:vertical; outline:none;
+  }
+  #fallback p{font-size:12.5px; color:var(--dim); margin-bottom:8px; line-height:1.6;}
+  #fallback button{margin-top:10px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">日本語<span>Flow</span></div>
+  <input id="url" placeholder="YouTube URL を貼り付け — paste a YouTube link (video needs Japanese subtitles)" spellcheck="false">
+  <button id="loadBtn">読み込む Load</button>
+  <label class="ctl"><input type="checkbox" id="autoscroll" checked> follow</label>
+  <span class="ctl">
+    <button class="ghost fsbtn" id="fsMinus">A−</button>
+    <button class="ghost fsbtn" id="fsPlus">A＋</button>
+  </span>
+  <span class="ctl">sync
+    <button class="ghost fsbtn" id="syncMinus">−½s</button>
+    <span id="syncVal" style="min-width:38px;text-align:center">0.0s</span>
+    <button class="ghost fsbtn" id="syncPlus">+½s</button>
+  </span>
+</header>
+
+<main>
+  <div id="vtitle"></div>
+  <div id="status">日本語のCC字幕付きYouTube動画のURLを貼ってください。
+字幕テキストを読みながら自然な日本語を聴けます。段落をクリックするとその場面に飛び、単語にカーソルを合わせると意味と画像が表示されます。
+
+<span class="hint">Paste a YouTube video that has Japanese closed captions. Click any paragraph to jump the video there; hover any word for meaning, reading, and a picture. If the highlight lags the audio, nudge it with the sync buttons.</span></div>
+  <div id="log"></div>
+  <div id="reader"></div>
+  <div id="fallback">
+    <p>Couldn't auto-fetch subtitles? Paste them manually (SRT format, YouTube transcript panel text, or plain lines of Japanese) and press Parse. On YouTube: ⋯ → 文字起こしを表示 / Show transcript → copy.</p>
+    <textarea id="manualText" placeholder="00:00:01,000 --> 00:00:04,000&#10;こんにちは、今日は東京の天気について話します。"></textarea>
+    <button id="parseBtn">Parse subtitles</button>
+  </div>
+</main>
+
+<div id="playerWrap">
+  <div id="pbar"><b>▶ video</b><button class="ghost" id="miniBtn">—</button></div>
+  <div id="player"></div>
+</div>
+
+<div id="popup"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"
+        onerror="var s=document.createElement('script');s.src='https://unpkg.com/kuromoji@0.1.2/build/kuromoji.js';document.head.appendChild(s);"></script>
+<script>
+window.onerror = (msg, src, line) => {
+  const st = document.getElementById('status');
+  if (st){ st.style.display = 'block'; st.textContent = '⚠ JavaScript error: ' + msg + ' (line ' + line + ')'; }
+};
+const $ = s => document.querySelector(s);
+const reader = $('#reader'), statusEl = $('#status'), popup = $('#popup');
+let tokenizer = null, player = null, playerReady = false;
+let segments = [], blocks = [], activeIdx = -1, curVid = null, syncOff = 0;
+
+/* ---------------- helpers ---------------- */
+const kata2hira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+const fmt = ms => { const s = Math.floor(ms/1000); return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); };
+const hasJP = s => /[一-龯々ぁ-んァ-ヶー]/.test(s);
+const POS_EN = {'名詞':'noun','動詞':'verb','形容詞':'adjective','副詞':'adverb','助詞':'particle','助動詞':'auxiliary','接続詞':'conjunction','連体詞':'adnominal','感動詞':'interjection','接頭詞':'prefix','記号':'symbol','フィラー':'filler'};
+function setStatus(msg){ statusEl.style.display = msg ? 'block' : 'none'; statusEl.textContent = msg; }
+const logEl = document.getElementById('log');
+function dlog(msg, cls){
+  logEl.style.display = 'block';
+  const d = document.createElement('div');
+  if (cls) d.className = cls;
+  d.textContent = new Date().toTimeString().slice(0,8) + '  ' + msg;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+  console.log('[NF]', msg);
+}
+
+/* ---------------- fetching (local server first) ---------------- */
+const LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const PUBLIC_PROXIES = [
+  u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+  u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+  u => 'https://test.cors.workers.dev/?' + u,
+  u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
+];
+const PROXIES = LOCAL ? [u => '/proxy?url=' + encodeURIComponent(u)] : PUBLIC_PROXIES;
+
+async function proxyFetch(url, label){
+  const what = label || new URL(url).hostname;
+  let winner = false;
+  const ctrls = [];
+  const attempts = PROXIES.map(p => (async () => {
+    const host = LOCAL ? 'local server' : new URL(p('https://x.com')).hostname;
+    const c = new AbortController(); ctrls.push(c);
+    const t = setTimeout(() => c.abort(), 20000);
+    try{
+      const r = await fetch(p(url), {signal: c.signal});
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const txt = await r.text();
+      if (!txt || txt.length < 3) throw new Error('empty response');
+      winner = true;
+      return txt;
+    }catch(e){
+      if (!winner) dlog(`${what} via ${host}: ${e.name === 'AbortError' ? 'timeout' : e.message}`, 'err');
+      throw e;
+    }finally{ clearTimeout(t); }
+  })());
+  try{
+    const txt = await Promise.any(attempts);
+    ctrls.forEach(c => { try{ c.abort(); }catch(e){} });
+    return txt;
+  }catch(e){
+    throw new Error('ネットワーク取得に失敗しました — fetch failed for ' + what);
+  }
+}
+
+/* ---------------- YouTube subtitle extraction (non-local fallback) ---------------- */
+function parseId(url){
+  const m = url.match(/(?:youtu\.be\/|v=|shorts\/|embed\/|live\/)([\w-]{11})/) || url.match(/^([\w-]{11})$/);
+  return m ? m[1] : null;
+}
+function extractTracks(html){
+  const key = '"captionTracks":';
+  const i = html.indexOf(key);
+  if (i < 0) return null;
+  let depth = 0, end = -1;
+  for (let k = i + key.length; k < html.length; k++){
+    const ch = html[k];
+    if (ch === '[') depth++;
+    else if (ch === ']'){ depth--; if (depth === 0){ end = k + 1; break; } }
+  }
+  try{ return JSON.parse(html.slice(i + key.length, end)); }catch(e){ return null; }
+}
+function parseJson3(txt){
+  const d = JSON.parse(txt); const out = [];
+  for (const ev of (d.events || [])){
+    if (!ev.segs) continue;
+    const text = ev.segs.map(s => s.utf8 || '').join('').replace(/\n/g, ' ').trim();
+    if (text) out.push({t: ev.tStartMs || 0, text});
+  }
+  return out;
+}
+function parseXmlCaps(xml){
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+  return [...doc.querySelectorAll('text')].map(n => ({
+    t: Math.round(parseFloat(n.getAttribute('start') || 0) * 1000),
+    text: (n.textContent || '').replace(/\n/g, ' ').trim()
+  })).filter(s => s.text);
+}
+function pickTrack(tracks){
+  return tracks.find(t => t.languageCode === 'ja' && t.kind !== 'asr')
+      || tracks.find(t => t.languageCode === 'ja')
+      || tracks[0];
+}
+async function fetchSegs(tr){
+  let segs = null;
+  try{ segs = parseJson3(await proxyFetch(tr.baseUrl + '&fmt=json3', 'subtitles')); }catch(e){}
+  if (!segs || !segs.length){ try{ segs = parseXmlCaps(await proxyFetch(tr.baseUrl, 'subtitles')); }catch(e){} }
+  return (segs && segs.length) ? segs : null;
+}
+
+/* ---------------- tokenizer ---------------- */
+function loadTokenizer(){
+  if (tokenizer) return Promise.resolve(tokenizer);
+  if (typeof kuromoji === 'undefined') return Promise.reject(new Error('Tokenizer library failed to load — check your internet connection and reload the page.'));
+  setStatus('辞書を読み込み中… loading morphological analyzer (~15 MB, first time only)');
+  const paths = ['https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/', 'https://unpkg.com/kuromoji@0.1.2/dict/'];
+  return new Promise((resolve, reject) => {
+    const tryPath = idx => {
+      if (idx >= paths.length) return reject(new Error('tokenizer failed to load'));
+      kuromoji.builder({dicPath: paths[idx]}).build((err, tk) => {
+        if (err) return tryPath(idx + 1);
+        tokenizer = tk; resolve(tk);
+      });
+    };
+    tryPath(0);
+  });
+}
+
+/* ---------------- paragraph blocks ---------------- */
+function blockify(segs){
+  const out = [];
+  let cur = null;
+  for (const s of segs){
+    const txt = s.text.trim();
+    if (!txt) continue;
+    if (!cur) cur = {t: s.t, parts: []};
+    cur.parts.push(txt);
+    const joinedLen = cur.parts.reduce((a, p) => a + p.length, 0);
+    if (/[。！？!?」]$/.test(txt) || joinedLen > 110){
+      const sep = hasJP(cur.parts[0]) ? '' : ' ';
+      out.push({t: cur.t, text: cur.parts.join(sep)});
+      cur = null;
+    }
+  }
+  if (cur){
+    const sep = hasJP(cur.parts[0]) ? '' : ' ';
+    out.push({t: cur.t, text: cur.parts.join(sep)});
+  }
+  return out;
+}
+
+/* ---------------- render ---------------- */
+function renderSegments(){
+  blocks = blockify(segments);
+  reader.innerHTML = '';
+  activeIdx = -1;
+  const frag = document.createDocumentFragment();
+  blocks.forEach((blk, i) => {
+    const line = document.createElement('div');
+    line.className = 'line'; line.dataset.i = i;
+    if (blk.t >= 0){
+      const ts = document.createElement('span');
+      ts.className = 'ts'; ts.textContent = fmt(blk.t);
+      line.appendChild(ts);
+    }
+    const body = document.createElement('span');
+    for (const tk of tokenizer.tokenize(blk.text)){
+      if (hasJP(tk.surface_form)){
+        const w = document.createElement('span');
+        w.className = 'w';
+        w.textContent = tk.surface_form;
+        w.dataset.base = (tk.basic_form && tk.basic_form !== '*') ? tk.basic_form : tk.surface_form;
+        w.dataset.reading = (tk.reading && tk.reading !== '*') ? kata2hira(tk.reading) : '';
+        w.dataset.pos = tk.pos || '';
+        body.appendChild(w);
+      } else {
+        body.appendChild(document.createTextNode(tk.surface_form));
+      }
+    }
+    line.appendChild(body);
+    if (blk.t >= 0) line.addEventListener('click', e => { if (!e.target.classList.contains('w')) seekTo(blk.t); });
+    frag.appendChild(line);
+  });
+  reader.appendChild(frag);
+}
+
+/* ---------------- dictionary + image lookups ---------------- */
+const dictCache = new Map(), imgCache = new Map();
+function lookup(base){
+  if (dictCache.has(base)) return dictCache.get(base);
+  const p = (async () => {
+    const txt = await proxyFetch('https://jisho.org/api/v1/search/words?keyword=' + encodeURIComponent('"' + base + '"'), 'jisho');
+    const j = JSON.parse(txt);
+    const d = j.data && j.data[0];
+    if (!d) return null;
+    return {
+      reading: d.japanese[0].reading || '',
+      senses: d.senses.slice(0, 3).map(s => ({pos: (s.parts_of_speech || []).join(', '), gloss: (s.english_definitions || []).join('; ')}))
+    };
+  })().catch(() => null);
+  dictCache.set(base, p);
+  return p;
+}
+async function wikiThumb(lang, title){
+  try{
+    const r = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
+    if (!r.ok) return null;
+    const j = await r.json();
+    return (j.thumbnail && j.type !== 'disambiguation') ? j.thumbnail.source : null;
+  }catch(e){ return null; }
+}
+async function commonsThumb(q){
+  try{
+    const r = await fetch('https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*' +
+      '&generator=search&gsrnamespace=6&gsrlimit=3&gsrsearch=' + encodeURIComponent(q) +
+      '&prop=imageinfo&iiprop=url|mime&iiurlwidth=240');
+    if (!r.ok) return null;
+    const j = await r.json();
+    const pages = j.query && j.query.pages;
+    if (!pages) return null;
+    for (const p of Object.values(pages).sort((a,b) => (a.index||9) - (b.index||9))){
+      const ii = p.imageinfo && p.imageinfo[0];
+      if (ii && /^image\/(jpeg|png|webp)/.test(ii.mime || '')) return ii.thumburl || ii.url;
+    }
+    return null;
+  }catch(e){ return null; }
+}
+function findImage(base, gloss){
+  if (imgCache.has(base)) return imgCache.get(base);
+  const p = (async () => {
+    const g = (gloss || '').split(';')[0].replace(/\(.*?\)/g, '').replace(/^to /, '').trim();
+    let src = await wikiThumb('ja', base);
+    if (!src && g) src = await wikiThumb('en', g);
+    if (!src && g) src = await commonsThumb(g);
+    if (!src) src = await commonsThumb(base);
+    return src;
+  })().catch(() => null);
+  imgCache.set(base, p);
+  return p;
+}
+
+/* ---------------- popup ---------------- */
+let hoverTimer, hideTimer, popupToken = 0;
+reader.addEventListener('mouseover', e => {
+  const w = e.target.closest('.w'); if (!w) return;
+  clearTimeout(hoverTimer); clearTimeout(hideTimer);
+  hoverTimer = setTimeout(() => showPopup(w), 200);
+});
+reader.addEventListener('mouseout', e => {
+  if (!e.target.closest('.w')) return;
+  clearTimeout(hoverTimer); scheduleHide();
+});
+popup.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+popup.addEventListener('mouseleave', scheduleHide);
+function scheduleHide(){ hideTimer = setTimeout(() => popup.classList.remove('show'), 260); }
+
+async function showPopup(w){
+  const token = ++popupToken;
+  const base = w.dataset.base, posJP = (w.dataset.pos || '').split(',')[0];
+  const posLabel = POS_EN[posJP] ? posJP + ' · ' + POS_EN[posJP] : posJP;
+  popup.innerHTML = `
+    <div class="p-head">
+      <div class="p-main">
+        <div class="p-word">${w.textContent}</div>
+        <div class="p-reading">${w.dataset.reading || ''}</div>
+        ${posLabel ? `<span class="p-pos">${posLabel}</span>` : ''}
+      </div>
+      <img class="p-img" alt="">
+    </div>
+    <div class="p-loading">検索中… looking up meaning…</div>`;
+  positionPopup(w);
+  popup.classList.add('show');
+
+  const entry = await lookup(base);
+  if (token !== popupToken) return;
+  const loading = popup.querySelector('.p-loading');
+  if (entry && entry.senses.length){
+    if (entry.reading && !w.dataset.reading) popup.querySelector('.p-reading').textContent = entry.reading;
+    const div = document.createElement('div');
+    div.className = 'p-senses';
+    div.innerHTML = entry.senses.map((s, i) =>
+      `<div class="sense"><span class="n">${i + 1}</span><span>${s.gloss}${s.pos ? `<span class="sp">${s.pos}</span>` : ''}</span></div>`).join('');
+    loading.replaceWith(div);
+  } else {
+    loading.textContent = '辞書に見つかりませんでした — not found in dictionary';
+  }
+  positionPopup(w);
+
+  const gloss = entry && entry.senses[0] ? entry.senses[0].gloss : '';
+  const src = await findImage(base, gloss);
+  if (token !== popupToken) return;
+  if (src){
+    const img = popup.querySelector('.p-img');
+    img.onload = () => { img.style.display = 'block'; positionPopup(w); };
+    img.src = src;
+  }
+}
+function positionPopup(w){
+  const r = w.getBoundingClientRect();
+  const pw = popup.offsetWidth || 340, ph = popup.offsetHeight || 140;
+  let x = r.left + r.width/2 - pw/2;
+  x = Math.max(12, Math.min(x, window.innerWidth - pw - 12));
+  let y = r.top - ph - 12;
+  if (y < 12) y = r.bottom + 12;
+  popup.style.left = x + 'px'; popup.style.top = y + 'px';
+}
+
+/* ---------------- YouTube player ---------------- */
+function mountPlayer(vid){
+  $('#playerWrap').style.display = 'block';
+  if (player && playerReady && curVid !== vid){ player.cueVideoById(vid); curVid = vid; return; }
+  if (player) return;
+  curVid = vid;
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.body.appendChild(tag);
+  window.onYouTubeIframeAPIReady = () => {
+    player = new YT.Player('player', {
+      width: 336, height: 189, videoId: vid,
+      playerVars: {playsinline: 1, rel: 0},
+      events: {onReady: () => { playerReady = true; }}
+    });
+  };
+}
+function seekTo(ms){
+  if (player && playerReady){ player.seekTo(ms/1000, true); player.playVideo(); }
+}
+$('#miniBtn').addEventListener('click', () => {
+  const wrap = $('#playerWrap');
+  wrap.classList.toggle('mini');
+  $('#miniBtn').textContent = wrap.classList.contains('mini') ? '□' : '—';
+});
+
+/* active-block sync */
+setInterval(() => {
+  if (!player || !playerReady || !blocks.length || !player.getCurrentTime) return;
+  const t = player.getCurrentTime() * 1000 + syncOff;
+  let idx = -1;
+  for (let i = 0; i < blocks.length; i++){
+    if (blocks[i].t >= 0 && blocks[i].t <= t + 200) idx = i; else if (blocks[i].t > t) break;
+  }
+  if (idx !== activeIdx){
+    activeIdx = idx;
+    reader.querySelectorAll('.line.active').forEach(n => n.classList.remove('active'));
+    const n = reader.querySelector(`.line[data-i="${idx}"]`);
+    if (n){
+      n.classList.add('active');
+      if ($('#autoscroll').checked) n.scrollIntoView({block: 'center', behavior: 'smooth'});
+    }
+  }
+}, 400);
+
+/* sync offset */
+function updSync(){ $('#syncVal').textContent = (syncOff/1000).toFixed(1) + 's'; }
+$('#syncMinus').addEventListener('click', () => { syncOff -= 500; updSync(); });
+$('#syncPlus').addEventListener('click', () => { syncOff += 500; updSync(); });
+
+/* ---------------- main load flow ---------------- */
+async function loadVideo(){
+  const vid = parseId($('#url').value.trim());
+  if (!vid){ setStatus('有効なYouTube URLを入力してください — that doesn\'t look like a YouTube link.'); return; }
+  $('#fallback').style.display = 'none';
+  reader.innerHTML = ''; $('#vtitle').textContent = ''; segments = []; blocks = []; activeIdx = -1;
+  logEl.innerHTML = '';
+  dlog('video id: ' + vid);
+  try{
+    let segs = null;
+    if (LOCAL){
+      setStatus('字幕を取得中… fetching subtitles via local server…');
+      const r = await fetch('/subs?v=' + vid);
+      const j = await r.json();
+      (j.log || []).forEach(l => dlog(l, 'err'));
+      if (j.title) $('#vtitle').textContent = j.title;
+      if (j.segs && j.segs.length){
+        segs = j.segs;
+        dlog(`✓ subtitles: ${segs.length} lines via ${j.source}`, 'ok');
+      } else {
+        throw new Error(j.error || 'subtitle fetch failed');
+      }
+    } else {
+      setStatus('動画ページを取得中… fetching video page…');
+      let html = null, tracks = null;
+      try{
+        html = await proxyFetch('https://www.youtube.com/watch?v=' + vid + '&hl=ja', 'youtube watch page');
+        const tm = html.match(/<title>(.*?)<\/title>/);
+        if (tm) $('#vtitle').textContent = tm[1].replace(/ - YouTube$/, '').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+        tracks = extractTracks(html);
+        dlog(tracks ? `caption tracks: ${tracks.length} (${tracks.map(t=>t.languageCode).join(', ')})` : 'no captionTracks in page', tracks ? 'ok' : 'err');
+      }catch(e){ dlog('watch page unavailable', 'err'); }
+      if (tracks && tracks.length){
+        setStatus('字幕を取得中… fetching subtitles…');
+        segs = await fetchSegs(pickTrack(tracks));
+      }
+      if (!segs && html && (!tracks || !tracks.length)) throw new Error('この動画には字幕がありません。No captions on this video — pick one with Japanese CC, or paste subtitles manually below.');
+      if (!segs) throw new Error('字幕の取得に失敗しました。Subtitle fetch was blocked — run the local server (python3 nihongo_flow_server.py) for reliable fetching, or paste the transcript manually below.');
+      dlog(`✓ subtitles parsed: ${segs.length} lines`, 'ok');
+    }
+    segments = segs;
+    await loadTokenizer();
+    setStatus('');
+    renderSegments();
+    logEl.style.display = 'none';
+    mountPlayer(vid);
+  }catch(err){
+    dlog('FAILED: ' + err.message, 'err');
+    setStatus(err.message);
+    $('#fallback').style.display = 'block';
+    mountPlayer(vid);
+  }
+}
+$('#loadBtn').addEventListener('click', loadVideo);
+$('#url').addEventListener('keydown', e => { if (e.key === 'Enter') loadVideo(); });
+
+/* ---------------- manual paste fallback ---------------- */
+$('#parseBtn').addEventListener('click', async () => {
+  const text = $('#manualText').value.trim();
+  if (!text) return;
+  const segs = [];
+  const srtRe = /(\d{1,2}):(\d{2}):(\d{2})[,.](\d{3})/;
+  if (srtRe.test(text)){
+    for (const block of text.split(/\n\s*\n/)){
+      const lines = block.trim().split('\n');
+      const ti = lines.findIndex(l => srtRe.test(l));
+      if (ti < 0) continue;
+      const m = lines[ti].match(srtRe);
+      const t = (+m[1]*3600 + +m[2]*60 + +m[3])*1000 + +m[4];
+      const body = lines.slice(ti + 1).join(' ').trim();
+      if (body) segs.push({t, text: body});
+    }
+  } else {
+    // YouTube transcript panel format "0:05 テキスト" (timestamp may be on its own line)
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const tsRe = /^(?:(\d+):)?(\d{1,2}):(\d{2})$/;
+    const tsInline = /^(?:(\d+):)?(\d{1,2}):(\d{2})\s+(.+)$/;
+    let pendingT = null, anyTime = false;
+    for (const l of lines){
+      let m;
+      if ((m = l.match(tsRe))){ pendingT = ((+(m[1]||0))*3600 + +m[2]*60 + +m[3])*1000; anyTime = true; }
+      else if ((m = l.match(tsInline))){ segs.push({t: ((+(m[1]||0))*3600 + +m[2]*60 + +m[3])*1000, text: m[4]}); anyTime = true; }
+      else if (pendingT !== null){ segs.push({t: pendingT, text: l}); pendingT = null; }
+      else segs.push({t: -1, text: l});
+    }
+    if (!anyTime) segs.forEach(s => s.t = -1); // no timestamps → no sync, steady text
+  }
+  if (!segs.length){ setStatus('解析できませんでした — could not parse that text.'); return; }
+  segments = segs;
+  await loadTokenizer();
+  setStatus('');
+  $('#fallback').style.display = 'none';
+  renderSegments();
+});
+
+/* ---------------- font size ---------------- */
+let fs = 22;
+$('#fsPlus').addEventListener('click', () => { fs = Math.min(34, fs + 2); document.documentElement.style.setProperty('--fs', fs + 'px'); });
+$('#fsMinus').addEventListener('click', () => { fs = Math.max(14, fs - 2); document.documentElement.style.setProperty('--fs', fs + 'px'); });
+
+/* ready indicator */
+document.querySelector('.logo').insertAdjacentHTML('beforeend',
+  ' <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#4ade80;vertical-align:middle;margin-left:2px" title="app ready"></span>');
+if (LOCAL) document.querySelector('.logo').insertAdjacentHTML('beforeend',
+  ' <span style="font-size:10px;color:#4ade80;font-weight:500;margin-left:4px">local server ✓</span>');
+</script>
+</body>
+</html>
