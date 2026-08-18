@@ -5,79 +5,231 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NihongoFlow — Japanese Immersion Reader</title>
 <style>
-  :root{
-    --fs: 22px;
-    --bg1:#0d0f14; --bg2:#151a24;
+  :root, body[data-theme="dark"]{
+    --fs: 21px; --cz: 1;
+    --jfont: 'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif;
+    --bg1:#0d0f14; --bg2:#1c2436;
     --text:#e8eaf0; --dim:#8b93a7; --accent:#7aa2ff; --accent2:#ffd479;
     --glass: rgba(28,30,38,.62);
     --glass-border: rgba(255,255,255,.14);
+    --hdr: rgba(13,15,20,.72);
+    --panel: rgba(255,255,255,.06);
+    --panel-border: rgba(255,255,255,.12);
+    --btn-text:#0c1222;
+    --hl: rgba(122,162,255,.16);
+    --whl: rgba(255,212,121,.3);
+    --ok:#4ade80; --bad:#f87171;
+  }
+  body[data-theme="midnight"]{
+    --bg1:#000000; --bg2:#0a0a12;
+    --text:#e6e6ea; --dim:#7d7d8f; --accent:#5e8bff; --accent2:#e8b84a;
+    --glass: rgba(16,16,22,.72); --glass-border: rgba(255,255,255,.12);
+    --hdr: rgba(0,0,0,.8); --panel: rgba(255,255,255,.06); --panel-border: rgba(255,255,255,.11);
+    --btn-text:#000; --hl: rgba(94,139,255,.18); --whl: rgba(232,184,74,.28);
+    --ok:#4ade80; --bad:#f87171;
+  }
+  body[data-theme="nord"]{
+    --bg1:#2e3440; --bg2:#3b4252;
+    --text:#eceff4; --dim:#9aa5b5; --accent:#88c0d0; --accent2:#ebcb8b;
+    --glass: rgba(59,66,82,.68); --glass-border: rgba(236,239,244,.14);
+    --hdr: rgba(46,52,64,.8); --panel: rgba(236,239,244,.07); --panel-border: rgba(236,239,244,.14);
+    --btn-text:#2e3440; --hl: rgba(136,192,208,.18); --whl: rgba(235,203,139,.28);
+    --ok:#a3be8c; --bad:#bf616a;
+  }
+  body[data-theme="matcha"]{
+    --bg1:#101710; --bg2:#1b2a1c;
+    --text:#e4ecdf; --dim:#8ba183; --accent:#8fce8f; --accent2:#d9c26a;
+    --glass: rgba(23,33,23,.7); --glass-border: rgba(228,236,223,.13);
+    --hdr: rgba(16,23,16,.8); --panel: rgba(228,236,223,.06); --panel-border: rgba(228,236,223,.13);
+    --btn-text:#101710; --hl: rgba(143,206,143,.16); --whl: rgba(217,194,106,.26);
+    --ok:#8fce8f; --bad:#e08080;
+  }
+  body[data-theme="plum"]{
+    --bg1:#16101e; --bg2:#251733;
+    --text:#ece4f2; --dim:#9b8bb0; --accent:#bd93f9; --accent2:#f1c48a;
+    --glass: rgba(30,20,42,.7); --glass-border: rgba(236,228,242,.13);
+    --hdr: rgba(22,16,30,.8); --panel: rgba(236,228,242,.06); --panel-border: rgba(236,228,242,.13);
+    --btn-text:#16101e; --hl: rgba(189,147,249,.17); --whl: rgba(241,196,138,.26);
+    --ok:#69d98a; --bad:#f28080;
+  }
+  body[data-theme="light"]{
+    --bg1:#f2f4f8; --bg2:#e2e8f4;
+    --text:#1b1e28; --dim:#68708a; --accent:#3b64e0; --accent2:#a2701a;
+    --glass: rgba(255,255,255,.75);
+    --glass-border: rgba(0,0,0,.1);
+    --hdr: rgba(244,246,250,.82);
+    --panel: rgba(0,0,0,.05);
+    --panel-border: rgba(0,0,0,.12);
+    --btn-text:#fff;
+    --hl: rgba(59,100,224,.14);
+    --whl: rgba(255,196,0,.35);
+    --ok:#15803d; --bad:#b91c1c;
+  }
+  body[data-theme="sepia"]{
+    --bg1:#f4ecd9; --bg2:#eadfc6;
+    --text:#3b3226; --dim:#8a7c62; --accent:#9a6b2f; --accent2:#7a5b1e;
+    --glass: rgba(250,244,229,.8);
+    --glass-border: rgba(90,70,40,.18);
+    --hdr: rgba(244,236,217,.85);
+    --panel: rgba(90,70,40,.07);
+    --panel-border: rgba(90,70,40,.18);
+    --btn-text:#fff;
+    --hl: rgba(154,107,47,.16);
+    --whl: rgba(200,150,50,.3);
+    --ok:#3f6212; --bad:#9f1239;
+  }
+  body[data-theme="sakura"]{
+    --bg1:#fdf3f5; --bg2:#fbe4ea;
+    --text:#33222a; --dim:#94707e; --accent:#d4577a; --accent2:#9d5a1c;
+    --glass: rgba(255,250,252,.8);
+    --glass-border: rgba(180,80,110,.15);
+    --hdr: rgba(253,243,245,.85);
+    --panel: rgba(180,80,110,.06);
+    --panel-border: rgba(180,80,110,.16);
+    --btn-text:#fff;
+    --hl: rgba(212,87,122,.14);
+    --whl: rgba(255,180,60,.3);
+    --ok:#15803d; --bad:#b91c1c;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
   body{
     font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Yu Gothic',-apple-system,'Noto Sans JP',sans-serif;
-    background:radial-gradient(1200px 800px at 70% -10%, #1c2436 0%, var(--bg1) 55%), var(--bg1);
+    background:radial-gradient(1200px 800px at 70% -10%, var(--bg2) 0%, var(--bg1) 55%), var(--bg1);
     color:var(--text);
     -webkit-font-smoothing:antialiased;
+    transition:background .3s, color .3s;
   }
   header{
-    position:sticky; top:0; z-index:50;
-    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-    padding:14px 20px;
-    background:rgba(13,15,20,.72);
-    backdrop-filter:blur(24px) saturate(160%);
-    -webkit-backdrop-filter:blur(24px) saturate(160%);
-    border-bottom:1px solid rgba(255,255,255,.07);
+    position:sticky; top:12px; z-index:50;
+    display:flex; gap:9px; align-items:center; flex-wrap:wrap;
+    margin:12px 16px 0;
+    padding:11px 18px;
+    background:var(--hdr);
+    backdrop-filter:blur(26px) saturate(170%);
+    -webkit-backdrop-filter:blur(26px) saturate(170%);
+    border:1px solid var(--panel-border);
+    border-radius:18px;
+    box-shadow:0 10px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+    transition:transform .28s ease, opacity .28s ease;
   }
-  .logo{font-weight:700; letter-spacing:.4px; font-size:15px; margin-right:4px; white-space:nowrap;}
+  header.hide{transform:translateY(calc(-100% - 16px)); opacity:0;}
+  #topZone{position:fixed; top:0; left:0; right:0; height:18px; z-index:55;}
+  .logo{font-weight:700; letter-spacing:.4px; font-size:15px; white-space:nowrap;}
   .logo span{color:var(--accent);}
   #url{
-    flex:1; min-width:220px;
-    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+    flex:1; min-width:180px;
+    background:var(--panel); border:1px solid var(--panel-border);
     border-radius:10px; padding:9px 13px; color:var(--text); font-size:13.5px; outline:none;
-    transition:border-color .15s;
   }
   #url:focus{border-color:var(--accent);}
   button{
-    background:var(--accent); border:none; color:#0c1222; font-weight:600;
+    background:var(--accent); border:none; color:var(--btn-text); font-weight:600;
     padding:9px 16px; border-radius:10px; cursor:pointer; font-size:13.5px;
     transition:filter .15s;
   }
-  button:hover{filter:brightness(1.12);}
+  button:hover{filter:brightness(1.1);}
   button.ghost{
-    background:rgba(255,255,255,.08); color:var(--text); border:1px solid rgba(255,255,255,.12); font-weight:500;
+    background:var(--panel); color:var(--text); border:1px solid var(--panel-border); font-weight:500;
+  }
+  select{
+    background:var(--panel); color:var(--text); border:1px solid var(--panel-border);
+    border-radius:9px; padding:7px 8px; font-size:12.5px; outline:none; cursor:pointer;
   }
   .ctl{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--dim); white-space:nowrap;}
   .ctl input[type=checkbox]{accent-color:var(--accent); width:15px; height:15px;}
   .fsbtn{padding:6px 10px; font-size:12px;}
 
-  main{max-width:760px; margin:0 auto; padding:34px 24px 220px;}
+  .tabs{display:flex; gap:4px; background:var(--panel); border-radius:11px; padding:3px;}
+  .tabs button{background:transparent; color:var(--dim); font-weight:600; padding:7px 16px; border-radius:9px; font-size:13px;}
+  .tabs button.on{background:var(--accent); color:var(--btn-text);}
+
+  main{max-width:800px; margin:0 auto; padding:30px 28px 220px;}
   #status{color:var(--dim); font-size:14px; line-height:1.7; padding:30px 6px; text-align:center; white-space:pre-line;}
   #status .hint{font-size:12.5px; opacity:.75;}
   #log{
     display:none; margin:0 0 18px; padding:12px 14px;
-    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09);
+    background:var(--panel); border:1px solid var(--panel-border);
     border-radius:10px; font-family:ui-monospace,'SF Mono',Menlo,monospace;
     font-size:11px; line-height:1.7; color:var(--dim); max-height:180px; overflow-y:auto;
   }
-  #log .ok{color:#4ade80;} #log .err{color:#f87171;}
-  #vtitle{font-size:16px; font-weight:600; color:var(--dim); margin-bottom:22px; line-height:1.5;}
-  .line{
-    display:flex; gap:16px; align-items:baseline;
-    padding:14px 16px; margin:4px -16px; border-radius:12px;
-    font-size:var(--fs); line-height:1.95; cursor:pointer;
-    transition:background .15s;
-  }
-  .line:hover{background:rgba(255,255,255,.045);}
-  .line.active{background:rgba(122,162,255,.12); box-shadow:inset 2px 0 0 var(--accent);}
-  .ts{
-    font-family:ui-monospace,'SF Mono',Menlo,monospace;
-    font-size:11.5px; color:var(--dim); min-width:44px; flex-shrink:0;
-    opacity:.7; user-select:none; transform:translateY(-2px);
-  }
-  .w{cursor:pointer; border-radius:5px; padding:0 1px; transition:background .12s;}
-  .w:hover{background:rgba(255,212,121,.28);}
+  #log .ok{color:var(--ok);} #log .err{color:var(--bad);}
+  #vtitle{font-size:17px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.5;
+    font-family:'Hiragino Mincho ProN','Yu Mincho',serif;}
+  #vmeta{font-size:12px; color:var(--dim); margin-bottom:26px;}
 
+  /* ---------- book ---------- */
+  #book{
+    font-family:var(--jfont);
+    font-size:var(--fs); line-height:2.15; text-align:justify;
+  }
+  #book p{margin:0 0 1.1em; text-indent:1em;}
+  .sent{cursor:pointer; border-radius:4px; transition:background .25s, opacity .4s;
+    -webkit-box-decoration-break:clone; box-decoration-break:clone;}
+  .sent:hover{background:var(--panel);}
+  .sent.active{background:var(--hl);}
+  /* focus mode: dim everything except the sentence being spoken */
+  body.focus .sent{opacity:.22;}
+  body.focus .sent:hover{opacity:.75;}
+  body.focus .sent.active{opacity:1;}
+  .w{cursor:pointer; border-radius:4px; transition:background .12s;}
+  .w:hover{background:var(--whl);}
+  /* space-bar highlight of the word currently being spoken */
+  .w.wcur{background:var(--whl); box-shadow:0 2px 0 var(--accent);}
+
+  /* ---------- cards ---------- */
+  #cardsView{display:none;}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:14px;}
+  .chip{
+    background:var(--panel); border:1px solid var(--panel-border);
+    color:var(--dim); padding:7px 15px; border-radius:20px; font-size:13px; font-weight:600;
+    cursor:pointer; transition:all .15s;
+  }
+  .chip:hover{border-color:var(--accent);}
+  .chip.on{background:var(--accent); color:var(--btn-text); border-color:var(--accent);}
+  .chip small{opacity:.75; font-weight:500; margin-left:4px;}
+  #enrichNote{text-align:center; font-size:11.5px; color:var(--dim); margin-bottom:16px; min-height:16px;}
+  #cardStage{display:flex; flex-direction:column; align-items:center; gap:20px;}
+  #card{
+    width:min(calc(480px * var(--cz)), 94vw); min-height:calc(300px * var(--cz));
+    background:var(--glass);
+    backdrop-filter:blur(34px) saturate(180%);
+    -webkit-backdrop-filter:blur(34px) saturate(180%);
+    border:1px solid var(--glass-border);
+    border-radius:22px;
+    box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:calc(14px * var(--cz)); padding:36px 30px; cursor:pointer; text-align:center;
+    transition:transform .12s; user-select:none;
+  }
+  #card:active{transform:scale(.985);}
+  .c-word{font-size:calc(52px * var(--cz)); font-weight:700; line-height:1.25;
+    font-family:var(--jfont);}
+  .c-word.back{font-size:calc(38px * var(--cz));}
+  .c-img{
+    width:calc(110px * var(--cz)); height:calc(110px * var(--cz));
+    border-radius:14px; object-fit:cover;
+    border:1px solid var(--glass-border); box-shadow:0 6px 18px rgba(0,0,0,.3);
+  }
+  .c-reading{font-size:calc(20px * var(--cz)); color:var(--accent2);}
+  .c-meaning{font-size:calc(17px * var(--cz)); line-height:1.6; color:var(--text); max-width:calc(420px * var(--cz));}
+  .c-hint{font-size:12px; color:var(--dim);}
+  .c-level{
+    font-size:11px; letter-spacing:1px; font-weight:700;
+    color:var(--accent); background:var(--hl);
+    border:1px solid var(--accent); padding:3px 11px; border-radius:20px;
+  }
+  .c-freq{font-size:11.5px; color:var(--dim);}
+  #cardBtns{display:flex; gap:12px;}
+  #cardBtns button{padding:11px 26px; font-size:14px; border-radius:12px;}
+  #againBtn{background:var(--panel); color:var(--text); border:1px solid var(--panel-border);}
+  #knownBtn{background:var(--ok); color:#fff;}
+  #cardProg{font-size:12.5px; color:var(--dim);}
+  #cardTools{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
+  #cardTools button{padding:6px 13px; font-size:12px;}
+  #cardEmpty{text-align:center; color:var(--dim); font-size:14px; line-height:1.8; padding:50px 0;}
+
+  /* ---------- popup ---------- */
   #popup{
     position:fixed; z-index:100; width:340px; max-width:calc(100vw - 24px);
     background:var(--glass);
@@ -85,10 +237,11 @@
     -webkit-backdrop-filter:blur(34px) saturate(180%);
     border:1px solid var(--glass-border);
     border-radius:16px;
-    box-shadow:0 18px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.09);
+    box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09);
     padding:16px 18px;
     opacity:0; pointer-events:none; transform:translateY(6px) scale(.98);
     transition:opacity .16s ease, transform .16s ease;
+    font-family:'Hiragino Sans',sans-serif; text-align:left;
   }
   #popup.show{opacity:1; pointer-events:auto; transform:translateY(0) scale(1);}
   .p-head{display:flex; gap:14px; align-items:flex-start;}
@@ -97,12 +250,12 @@
   .p-reading{color:var(--accent2); font-size:14px; margin-top:2px;}
   .p-pos{
     display:inline-block; margin-top:7px; font-size:10.5px; letter-spacing:.5px;
-    color:var(--accent); background:rgba(122,162,255,.14);
-    border:1px solid rgba(122,162,255,.3); padding:2px 8px; border-radius:20px;
+    color:var(--accent); background:var(--hl);
+    border:1px solid var(--accent); padding:2px 8px; border-radius:20px;
   }
   .p-img{
     width:88px; height:88px; flex-shrink:0; border-radius:12px; object-fit:cover;
-    border:1px solid rgba(255,255,255,.15); box-shadow:0 4px 14px rgba(0,0,0,.35);
+    border:1px solid var(--glass-border); box-shadow:0 4px 14px rgba(0,0,0,.25);
     display:none;
   }
   .p-senses{margin-top:12px; font-size:13.5px; line-height:1.55; color:var(--text);}
@@ -111,41 +264,47 @@
   .p-senses .sp{display:block; color:var(--dim); font-size:10.5px; margin-top:1px;}
   .p-loading{color:var(--dim); font-size:12.5px; margin-top:10px;}
 
+  /* ---------- player ---------- */
   #playerWrap{
     position:fixed; right:18px; bottom:18px; z-index:60;
     width:336px; border-radius:14px; overflow:hidden;
-    border:1px solid rgba(255,255,255,.12);
-    box-shadow:0 16px 44px rgba(0,0,0,.55);
-    background:#000;
-    display:none;
+    border:1px solid var(--panel-border);
+    box-shadow:0 16px 44px rgba(0,0,0,.45);
+    background:#000; display:none;
   }
-  #playerWrap.mini iframe, #playerWrap.mini #player{display:none;}
+  #playerWrap.mini #player{display:none;}
   #playerWrap.mini{width:auto;}
   #pbar{
     display:flex; justify-content:flex-end; align-items:center;
     background:rgba(20,22,30,.9); padding:5px 8px; gap:6px;
   }
-  #pbar b{font-size:11px; color:var(--dim); font-weight:500; margin-right:auto; padding-left:4px;}
+  #pbar b{font-size:11px; color:#8b93a7; font-weight:500; margin-right:auto; padding-left:4px;}
   #pbar button{padding:3px 9px; font-size:11px; border-radius:7px;}
   #player{width:336px; height:189px; border:0; display:block;}
 
   #fallback{display:none; margin-top:18px;}
   #fallback textarea{
-    width:100%; height:150px; background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.12); border-radius:12px;
+    width:100%; height:150px; background:var(--panel);
+    border:1px solid var(--panel-border); border-radius:12px;
     color:var(--text); padding:12px; font-size:13px; resize:vertical; outline:none;
   }
   #fallback p{font-size:12.5px; color:var(--dim); margin-bottom:8px; line-height:1.6;}
   #fallback button{margin-top:10px;}
 </style>
 </head>
-<body>
+<body data-theme="dark">
 
 <header>
   <div class="logo">日本語<span>Flow</span></div>
-  <input id="url" placeholder="YouTube URL を貼り付け — paste a YouTube link (video needs Japanese subtitles)" spellcheck="false">
+  <div class="tabs">
+    <button id="tabRead" class="on">読む Read</button>
+    <button id="tabCards">単語 Cards</button>
+    <button id="tabStories">物語 Stories</button>
+  </div>
+  <input id="url" placeholder="YouTube URL — video needs Japanese subtitles" spellcheck="false">
   <button id="loadBtn">読み込む Load</button>
   <label class="ctl"><input type="checkbox" id="autoscroll" checked> follow</label>
+  <label class="ctl" title="dim everything except the current sentence"><input type="checkbox" id="focusChk"> focus</label>
   <span class="ctl">
     <button class="ghost fsbtn" id="fsMinus">A−</button>
     <button class="ghost fsbtn" id="fsPlus">A＋</button>
@@ -155,22 +314,91 @@
     <span id="syncVal" style="min-width:38px;text-align:center">0.0s</span>
     <button class="ghost fsbtn" id="syncPlus">+½s</button>
   </span>
+  <select id="themeSel" title="theme">
+    <option value="dark">🌙 Dark</option>
+    <option value="midnight">⬛ Midnight</option>
+    <option value="nord">🧊 Nord</option>
+    <option value="matcha">🍵 Matcha</option>
+    <option value="plum">🍇 Plum</option>
+    <option value="light">☀️ Light</option>
+    <option value="sepia">📖 Sepia</option>
+    <option value="sakura">🌸 Sakura</option>
+  </select>
+  <select id="fontSel" title="Japanese font">
+    <option value="mincho">明朝 Mincho</option>
+    <option value="gothic">ゴシック Gothic</option>
+    <option value="maru">丸ゴ Rounded</option>
+    <option value="kyokasho">教科書 Textbook</option>
+  </select>
 </header>
 
 <main>
   <div id="vtitle"></div>
+  <div id="vmeta"></div>
   <div id="status">日本語のCC字幕付きYouTube動画のURLを貼ってください。
-字幕テキストを読みながら自然な日本語を聴けます。段落をクリックするとその場面に飛び、単語にカーソルを合わせると意味と画像が表示されます。
+本のように続くテキストを読みながら自然な日本語を聴けます。文をクリックするとその場面に飛び、単語にカーソルを合わせると意味と画像が表示されます。「単語 Cards」タブで動画の全単語をJLPTレベル別のフラッシュカードで先に学べます。
 
-<span class="hint">Paste a YouTube video that has Japanese closed captions. Click any paragraph to jump the video there; hover any word for meaning, reading, and a picture. If the highlight lags the audio, nudge it with the sync buttons.</span></div>
+<span class="hint">Paste a YouTube video with Japanese captions. Read along like a book — click a sentence to jump the video there, hover any word for meaning + picture. Then open the Cards tab to drill every word as flashcards filtered by JLPT level (N5–N1) or rarity, so you can pre-learn the vocabulary and listen with confidence.</span></div>
   <div id="log"></div>
-  <div id="reader"></div>
-  <div id="fallback">
-    <p>Couldn't auto-fetch subtitles? Paste them manually (SRT format, YouTube transcript panel text, or plain lines of Japanese) and press Parse. On YouTube: ⋯ → 文字起こしを表示 / Show transcript → copy.</p>
-    <textarea id="manualText" placeholder="00:00:01,000 --> 00:00:04,000&#10;こんにちは、今日は東京の天気について話します。"></textarea>
-    <button id="parseBtn">Parse subtitles</button>
+
+  <div id="readView">
+    <div id="book"></div>
+    <div id="fallback">
+      <p>Couldn't auto-fetch subtitles? Paste them manually (SRT, YouTube transcript panel text, or plain Japanese lines) and press Parse. On YouTube: ⋯ → 文字起こしを表示 / Show transcript → copy.</p>
+      <textarea id="manualText" placeholder="00:00:01,000 --> 00:00:04,000&#10;こんにちは、今日は東京の天気について話します。"></textarea>
+      <button id="parseBtn">Parse subtitles</button>
+    </div>
+  </div>
+
+  <div id="cardsView">
+    <div class="chips" id="chips"></div>
+    <div id="enrichNote"></div>
+    <div id="cardStage">
+      <div id="cardProg"></div>
+      <div id="card"></div>
+      <div id="cardBtns">
+        <button id="againBtn">また Again</button>
+        <button id="knownBtn">知ってる ✓ Known</button>
+      </div>
+      <div id="cardTools">
+        <button class="ghost" id="shuffleBtn">シャッフル shuffle</button>
+        <button class="ghost" id="czMinus">card −</button>
+        <button class="ghost" id="czPlus">card ＋</button>
+        <button class="ghost" id="resetBtn">reset known</button>
+      </div>
+      <div style="font-size:11px;color:var(--dim)">space = reveal → next · → = skip · 1 = again · 2 = known</div>
+    </div>
+    <div id="cardEmpty">まず動画を読み込んでください — load a video or a story first, then its vocabulary appears here as flashcards.</div>
+  </div>
+
+  <div id="storiesView" style="display:none">
+    <p style="text-align:center; color:var(--dim); font-size:13.5px; line-height:1.7; margin-bottom:18px;">
+      Describe your situation and AI writes a story around its vocabulary, loaded straight into the reader.
+    </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center; margin-bottom:10px;">
+      <input id="storyTopic" style="flex:1; min-width:240px; max-width:420px; background:var(--panel); border:1px solid var(--panel-border); border-radius:10px; padding:10px 13px; color:var(--text); font-size:13.5px; outline:none;" placeholder="e.g. I'm in a business meeting / 引っ越しの手続き / dating in Tokyo…" spellcheck="false">
+      <select id="storyLevel" title="JLPT level">
+        <option value="N5">N5 · easy</option>
+        <option value="N4">N4</option>
+        <option value="N3" selected>N3</option>
+        <option value="N2">N2</option>
+        <option value="N1">N1 · hard</option>
+      </select>
+      <button id="genStoryBtn">✨ AI生成 Generate</button>
+    </div>
+    <div id="storyStatus" style="text-align:center; font-size:12px; color:var(--dim); min-height:18px; margin-bottom:16px;"></div>
+    <p style="text-align:center; color:var(--dim); font-size:12px; margin-bottom:10px;">— or pick a ready-made story —</p>
+    <div class="chips" id="storyChips"></div>
+    <div style="margin-top:26px;">
+      <p style="font-size:12.5px; color:var(--dim); margin-bottom:8px; line-height:1.6;">
+        Or paste your own Japanese text:
+      </p>
+      <textarea id="customStory" style="width:100%; height:110px; background:var(--panel); border:1px solid var(--panel-border); border-radius:12px; color:var(--text); padding:12px; font-size:13px; resize:vertical; outline:none;" placeholder="日本語のテキストをここに貼り付けてください…"></textarea>
+      <button id="loadStoryBtn" style="margin-top:10px;">物語を読む Load story</button>
+    </div>
   </div>
 </main>
+<div id="topZone"></div>
 
 <div id="playerWrap">
   <div id="pbar"><b>▶ video</b><button class="ghost" id="miniBtn">—</button></div>
@@ -187,14 +415,16 @@ window.onerror = (msg, src, line) => {
   if (st){ st.style.display = 'block'; st.textContent = '⚠ JavaScript error: ' + msg + ' (line ' + line + ')'; }
 };
 const $ = s => document.querySelector(s);
-const reader = $('#reader'), statusEl = $('#status'), popup = $('#popup');
+const book = $('#book'), statusEl = $('#status'), popup = $('#popup');
 let tokenizer = null, player = null, playerReady = false;
-let segments = [], blocks = [], activeIdx = -1, curVid = null, syncOff = 0;
+let segments = [], sentences = [], activeIdx = -1, curVid = null, syncOff = 0;
+let curTab = 'read';
 
-/* ---------------- helpers ---------------- */
+/* ================= helpers ================= */
 const kata2hira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
-const fmt = ms => { const s = Math.floor(ms/1000); return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); };
 const hasJP = s => /[一-龯々ぁ-んァ-ヶー]/.test(s);
+const hasKanji = s => /[一-龯々]/.test(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 const POS_EN = {'名詞':'noun','動詞':'verb','形容詞':'adjective','副詞':'adverb','助詞':'particle','助動詞':'auxiliary','接続詞':'conjunction','連体詞':'adnominal','感動詞':'interjection','接頭詞':'prefix','記号':'symbol','フィラー':'filler'};
 function setStatus(msg){ statusEl.style.display = msg ? 'block' : 'none'; statusEl.textContent = msg; }
 const logEl = document.getElementById('log');
@@ -208,8 +438,50 @@ function dlog(msg, cls){
   console.log('[NF]', msg);
 }
 
-/* ---------------- fetching (local server first) ---------------- */
-const LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+/* ================= theme & sizes ================= */
+const themeSel = $('#themeSel');
+themeSel.value = localStorage.getItem('nf-theme') || 'dark';
+document.body.dataset.theme = themeSel.value;
+themeSel.addEventListener('change', () => {
+  document.body.dataset.theme = themeSel.value;
+  localStorage.setItem('nf-theme', themeSel.value);
+});
+const FONTS = {
+  mincho: "'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif",
+  gothic: "'Hiragino Sans','Hiragino Kaku Gothic ProN','Yu Gothic','Noto Sans JP',sans-serif",
+  maru: "'Hiragino Maru Gothic ProN','Yu Gothic','Noto Sans JP',sans-serif",
+  kyokasho: "'YuKyokasho','YuKyokasho Yoko','Klee One','Hiragino Mincho ProN',serif",
+};
+const fontSel = $('#fontSel');
+fontSel.value = localStorage.getItem('nf-font') || 'mincho';
+document.documentElement.style.setProperty('--jfont', FONTS[fontSel.value]);
+fontSel.addEventListener('change', () => {
+  document.documentElement.style.setProperty('--jfont', FONTS[fontSel.value]);
+  localStorage.setItem('nf-font', fontSel.value);
+});
+const focusChk = $('#focusChk');
+focusChk.checked = localStorage.getItem('nf-focus') === '1';
+document.body.classList.toggle('focus', focusChk.checked);
+focusChk.addEventListener('change', () => {
+  document.body.classList.toggle('focus', focusChk.checked);
+  localStorage.setItem('nf-focus', focusChk.checked ? '1' : '0');
+});
+let fs = +(localStorage.getItem('nf-fs') || 21);
+let cz = +(localStorage.getItem('nf-cz') || 1);
+const applySizes = () => {
+  document.documentElement.style.setProperty('--fs', fs + 'px');
+  document.documentElement.style.setProperty('--cz', cz);
+  localStorage.setItem('nf-fs', fs); localStorage.setItem('nf-cz', cz);
+};
+applySizes();
+$('#fsPlus').addEventListener('click', () => { fs = Math.min(34, fs + 2); applySizes(); });
+$('#fsMinus').addEventListener('click', () => { fs = Math.max(15, fs - 2); applySizes(); });
+$('#czPlus').addEventListener('click', () => { cz = Math.min(1.8, +(cz + 0.15).toFixed(2)); applySizes(); });
+$('#czMinus').addEventListener('click', () => { cz = Math.max(0.7, +(cz - 0.15).toFixed(2)); applySizes(); });
+
+/* ================= fetching ================= */
+/* true whenever the page is served by the NihongoFlow server (localhost OR cloud deploy) */
+const LOCAL = location.protocol.startsWith('http');
 const PUBLIC_PROXIES = [
   u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
   u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
@@ -247,7 +519,6 @@ async function proxyFetch(url, label){
   }
 }
 
-/* ---------------- YouTube subtitle extraction (non-local fallback) ---------------- */
 function parseId(url){
   const m = url.match(/(?:youtu\.be\/|v=|shorts\/|embed\/|live\/)([\w-]{11})/) || url.match(/^([\w-]{11})$/);
   return m ? m[1] : null;
@@ -285,17 +556,17 @@ function pickTrack(tracks){
       || tracks.find(t => t.languageCode === 'ja')
       || tracks[0];
 }
-async function fetchSegs(tr){
+async function fetchSegsBrowser(tr){
   let segs = null;
   try{ segs = parseJson3(await proxyFetch(tr.baseUrl + '&fmt=json3', 'subtitles')); }catch(e){}
   if (!segs || !segs.length){ try{ segs = parseXmlCaps(await proxyFetch(tr.baseUrl, 'subtitles')); }catch(e){} }
   return (segs && segs.length) ? segs : null;
 }
 
-/* ---------------- tokenizer ---------------- */
+/* ================= tokenizer ================= */
 function loadTokenizer(){
   if (tokenizer) return Promise.resolve(tokenizer);
-  if (typeof kuromoji === 'undefined') return Promise.reject(new Error('Tokenizer library failed to load — check your internet connection and reload the page.'));
+  if (typeof kuromoji === 'undefined') return Promise.reject(new Error('Tokenizer library failed to load — check your internet connection and reload.'));
   setStatus('辞書を読み込み中… loading morphological analyzer (~15 MB, first time only)');
   const paths = ['https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/', 'https://unpkg.com/kuromoji@0.1.2/dict/'];
   return new Promise((resolve, reject) => {
@@ -310,8 +581,8 @@ function loadTokenizer(){
   });
 }
 
-/* ---------------- paragraph blocks ---------------- */
-function blockify(segs){
+/* ================= book ================= */
+function sentencify(segs){
   const out = [];
   let cur = null;
   for (const s of segs){
@@ -319,66 +590,83 @@ function blockify(segs){
     if (!txt) continue;
     if (!cur) cur = {t: s.t, parts: []};
     cur.parts.push(txt);
-    const joinedLen = cur.parts.reduce((a, p) => a + p.length, 0);
-    if (/[。！？!?」]$/.test(txt) || joinedLen > 110){
-      const sep = hasJP(cur.parts[0]) ? '' : ' ';
-      out.push({t: cur.t, text: cur.parts.join(sep)});
+    const len = cur.parts.reduce((a, p) => a + p.length, 0);
+    if (/[。！？!?」]$/.test(txt) || len > 90){
+      out.push({t: cur.t, text: cur.parts.join(hasJP(cur.parts[0]) ? '' : ' ')});
       cur = null;
     }
   }
-  if (cur){
-    const sep = hasJP(cur.parts[0]) ? '' : ' ';
-    out.push({t: cur.t, text: cur.parts.join(sep)});
-  }
+  if (cur) out.push({t: cur.t, text: cur.parts.join(hasJP(cur.parts[0]) ? '' : ' ')});
   return out;
 }
+function tokenSpan(tk){
+  const w = document.createElement('span');
+  w.className = 'w';
+  w.textContent = tk.surface_form;
+  w.dataset.base = (tk.basic_form && tk.basic_form !== '*') ? tk.basic_form : tk.surface_form;
+  w.dataset.reading = (tk.reading && tk.reading !== '*') ? kata2hira(tk.reading) : '';
+  w.dataset.pos = tk.pos || '';
+  return w;
+}
+const fmtTime = ms => { const s = Math.floor(ms/1000); return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); };
 
-/* ---------------- render ---------------- */
-function renderSegments(){
-  blocks = blockify(segments);
-  reader.innerHTML = '';
+function renderBook(){
+  sentences = sentencify(segments);
+  book.innerHTML = '';
   activeIdx = -1;
   const frag = document.createDocumentFragment();
-  blocks.forEach((blk, i) => {
-    const line = document.createElement('div');
-    line.className = 'line'; line.dataset.i = i;
-    if (blk.t >= 0){
-      const ts = document.createElement('span');
-      ts.className = 'ts'; ts.textContent = fmt(blk.t);
-      line.appendChild(ts);
+  let para = document.createElement('p');
+  let count = 0, lastT = -1;
+  sentences.forEach((sen, i) => {
+    if (count > 0 && ((sen.t >= 0 && lastT >= 0 && sen.t - lastT > 6000 && count >= 2) || count >= 6)){
+      frag.appendChild(para);
+      para = document.createElement('p');
+      count = 0;
     }
-    const body = document.createElement('span');
-    for (const tk of tokenizer.tokenize(blk.text)){
-      if (hasJP(tk.surface_form)){
-        const w = document.createElement('span');
-        w.className = 'w';
-        w.textContent = tk.surface_form;
-        w.dataset.base = (tk.basic_form && tk.basic_form !== '*') ? tk.basic_form : tk.surface_form;
-        w.dataset.reading = (tk.reading && tk.reading !== '*') ? kata2hira(tk.reading) : '';
-        w.dataset.pos = tk.pos || '';
-        body.appendChild(w);
-      } else {
-        body.appendChild(document.createTextNode(tk.surface_form));
-      }
+    const span = document.createElement('span');
+    span.className = 'sent'; span.dataset.i = i;
+    for (const tk of tokenizer.tokenize(sen.text)){
+      if (hasJP(tk.surface_form)) span.appendChild(tokenSpan(tk));
+      else span.appendChild(document.createTextNode(tk.surface_form));
     }
-    line.appendChild(body);
-    if (blk.t >= 0) line.addEventListener('click', e => { if (!e.target.classList.contains('w')) seekTo(blk.t); });
-    frag.appendChild(line);
+    if (sen.t >= 0){
+      span.title = fmtTime(sen.t);
+      span.addEventListener('click', e => { if (!e.target.classList.contains('w')) seekTo(sen.t); });
+    }
+    para.appendChild(span);
+    count++; lastT = sen.t;
   });
-  reader.appendChild(frag);
+  if (para.childNodes.length) frag.appendChild(para);
+  book.appendChild(frag);
 }
 
-/* ---------------- dictionary + image lookups ---------------- */
+/* ================= dictionary + images ================= */
 const dictCache = new Map(), imgCache = new Map();
 function lookup(base){
   if (dictCache.has(base)) return dictCache.get(base);
   const p = (async () => {
+    // 1) local JMdict via server — instant, offline, no rate limits
+    if (LOCAL){
+      try{
+        const r = await fetch('/dict?word=' + encodeURIComponent(base));
+        const j = await r.json();
+        if (j.found){
+          return {
+            reading: kata2hira(j.reading || ''),
+            jlpt: j.level ? ['jlpt-' + j.level] : [],
+            senses: (j.senses || []).map(s => ({pos: s.pos || '', gloss: s.gloss})),
+          };
+        }
+      }catch(e){}
+    }
+    // 2) fallback: Jisho online
     const txt = await proxyFetch('https://jisho.org/api/v1/search/words?keyword=' + encodeURIComponent('"' + base + '"'), 'jisho');
     const j = JSON.parse(txt);
     const d = j.data && j.data[0];
     if (!d) return null;
     return {
       reading: d.japanese[0].reading || '',
+      jlpt: d.jlpt || [],
       senses: d.senses.slice(0, 3).map(s => ({pos: (s.parts_of_speech || []).join(', '), gloss: (s.english_definitions || []).join('; ')}))
     };
   })().catch(() => null);
@@ -423,14 +711,14 @@ function findImage(base, gloss){
   return p;
 }
 
-/* ---------------- popup ---------------- */
+/* ================= hover popup ================= */
 let hoverTimer, hideTimer, popupToken = 0;
-reader.addEventListener('mouseover', e => {
+book.addEventListener('mouseover', e => {
   const w = e.target.closest('.w'); if (!w) return;
   clearTimeout(hoverTimer); clearTimeout(hideTimer);
   hoverTimer = setTimeout(() => showPopup(w), 200);
 });
-reader.addEventListener('mouseout', e => {
+book.addEventListener('mouseout', e => {
   if (!e.target.closest('.w')) return;
   clearTimeout(hoverTimer); scheduleHide();
 });
@@ -442,12 +730,14 @@ async function showPopup(w){
   const token = ++popupToken;
   const base = w.dataset.base, posJP = (w.dataset.pos || '').split(',')[0];
   const posLabel = POS_EN[posJP] ? posJP + ' · ' + POS_EN[posJP] : posJP;
+  const lvl = jlptLookup(base, w.textContent, w.dataset.reading);
   popup.innerHTML = `
     <div class="p-head">
       <div class="p-main">
         <div class="p-word">${w.textContent}</div>
         <div class="p-reading">${w.dataset.reading || ''}</div>
         ${posLabel ? `<span class="p-pos">${posLabel}</span>` : ''}
+        ${lvl ? `<span class="p-pos" style="margin-left:4px">${lvl.level.toUpperCase()}</span>` : ''}
       </div>
       <img class="p-img" alt="">
     </div>
@@ -465,12 +755,14 @@ async function showPopup(w){
     div.innerHTML = entry.senses.map((s, i) =>
       `<div class="sense"><span class="n">${i + 1}</span><span>${s.gloss}${s.pos ? `<span class="sp">${s.pos}</span>` : ''}</span></div>`).join('');
     loading.replaceWith(div);
+  } else if (lvl && lvl.meaning){
+    loading.outerHTML = `<div class="p-senses"><div class="sense"><span class="n">1</span><span>${lvl.meaning}</span></div></div>`;
   } else {
     loading.textContent = '辞書に見つかりませんでした — not found in dictionary';
   }
   positionPopup(w);
 
-  const gloss = entry && entry.senses[0] ? entry.senses[0].gloss : '';
+  const gloss = entry && entry.senses[0] ? entry.senses[0].gloss : (lvl ? lvl.meaning : '');
   const src = await findImage(base, gloss);
   if (token !== popupToken) return;
   if (src){
@@ -489,7 +781,7 @@ function positionPopup(w){
   popup.style.left = x + 'px'; popup.style.top = y + 'px';
 }
 
-/* ---------------- YouTube player ---------------- */
+/* ================= player ================= */
 function mountPlayer(vid){
   $('#playerWrap').style.display = 'block';
   if (player && playerReady && curVid !== vid){ player.cueVideoById(vid); curVid = vid; return; }
@@ -514,39 +806,500 @@ $('#miniBtn').addEventListener('click', () => {
   wrap.classList.toggle('mini');
   $('#miniBtn').textContent = wrap.classList.contains('mini') ? '□' : '—';
 });
-
-/* active-block sync */
 setInterval(() => {
-  if (!player || !playerReady || !blocks.length || !player.getCurrentTime) return;
+  if (!player || !playerReady || !sentences.length || !player.getCurrentTime) return;
   const t = player.getCurrentTime() * 1000 + syncOff;
   let idx = -1;
-  for (let i = 0; i < blocks.length; i++){
-    if (blocks[i].t >= 0 && blocks[i].t <= t + 200) idx = i; else if (blocks[i].t > t) break;
+  for (let i = 0; i < sentences.length; i++){
+    if (sentences[i].t >= 0 && sentences[i].t <= t + 200) idx = i;
+    else if (sentences[i].t > t) break;
   }
   if (idx !== activeIdx){
     activeIdx = idx;
-    reader.querySelectorAll('.line.active').forEach(n => n.classList.remove('active'));
-    const n = reader.querySelector(`.line[data-i="${idx}"]`);
+    book.querySelectorAll('.sent.active').forEach(n => n.classList.remove('active'));
+    const n = book.querySelector(`.sent[data-i="${idx}"]`);
     if (n){
       n.classList.add('active');
-      if ($('#autoscroll').checked) n.scrollIntoView({block: 'center', behavior: 'smooth'});
+      if ($('#autoscroll').checked && curTab === 'read')
+        n.scrollIntoView({block: 'center', behavior: 'smooth'});
     }
   }
 }, 400);
-
-/* sync offset */
 function updSync(){ $('#syncVal').textContent = (syncOff/1000).toFixed(1) + 's'; }
 $('#syncMinus').addEventListener('click', () => { syncOff -= 500; updSync(); });
 $('#syncPlus').addEventListener('click', () => { syncOff += 500; updSync(); });
 
-/* ---------------- main load flow ---------------- */
+/* ================= JLPT data (two merged datasets + Jisho enrichment) ================= */
+let jlptMap = null, deck = [], queue = [], qi = 0, flipped = false, filter = 'all';
+const knownSet = new Set(JSON.parse(localStorage.getItem('nf-known') || '[]'));
+const saveKnown = () => localStorage.setItem('nf-known', JSON.stringify([...knownSet]));
+const levelCache = new Map(Object.entries(JSON.parse(localStorage.getItem('nf-lvl-cache') || '{}')));
+let lvlSaveTimer = null;
+function saveLevelCache(){
+  clearTimeout(lvlSaveTimer);
+  lvlSaveTimer = setTimeout(() =>
+    localStorage.setItem('nf-lvl-cache', JSON.stringify(Object.fromEntries(levelCache))), 800);
+}
+
+function parseCSV(txt){
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < txt.length; i++){
+    const c = txt[i];
+    if (q){
+      if (c === '"'){ if (txt[i+1] === '"'){ cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ','){ row.push(cell); cell = ''; }
+    else if (c === '\n'){ row.push(cell.replace(/\r$/, '')); rows.push(row); row = []; cell = ''; }
+    else cell += c;
+  }
+  if (cell || row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+const normJP = s => s.replace(/[～〜\s]/g, '').replace(/[（(].*?[）)]/g, '');
+
+/* CSV sources (verified) + JSON sources (tried tolerantly — any that 404 are skipped) */
+const JLPT_CSV_SOURCES = [
+  lv => `https://cdn.jsdelivr.net/gh/jamsinclair/open-anki-jlpt-decks@main/src/${lv}.csv`,
+  lv => `https://cdn.jsdelivr.net/gh/elzup/jlpt-word-list@master/src/${lv}.csv`,
+];
+const JLPT_JSON_SOURCES = [
+  lv => `https://cdn.jsdelivr.net/gh/wkei/jlpt-vocab-api@main/data/${lv}.json`,
+  lv => `https://cdn.jsdelivr.net/gh/wkei/jlpt-vocab-api@master/data/${lv}.json`,
+  lv => `https://raw.githubusercontent.com/wkei/jlpt-vocab-api/main/data/${lv}.json`,
+  lv => `https://cdn.jsdelivr.net/gh/stephenmk/yomitan-jlpt-vocab@main/data/${lv}.json`,
+];
+function addEntry(e, rd, lv, meaning){
+  const entry = {level: lv, reading: rd, meaning: meaning || ''};
+  if (e) jlptMap.set(e, entry);
+  if (rd && rd.length > 1 && !jlptMap.has(rd)) jlptMap.set(rd, entry);
+}
+/* tolerant JSON shapes: [ {...} ], {words:[...]}, {data:[...]} with word/expression/vocabulary + furigana/reading/kana + meaning/english */
+function ingestJson(data, lv){
+  const arr = Array.isArray(data) ? data : (data.words || data.data || data[lv] || []);
+  let n = 0;
+  for (const it of arr){
+    if (!it || typeof it !== 'object') continue;
+    const word = normJP(String(it.word || it.expression || it.vocabulary || it.kanji || ''));
+    const rd = kata2hira(normJP(String(it.furigana || it.reading || it.kana || it.hiragana || '')));
+    const meaning = String(it.meaning || it.english || it.definition || '');
+    if (word || rd){ addEntry(word || rd, rd, lv, meaning); n++; }
+  }
+  return n;
+}
+let jlptLoading = null;
+function loadJLPT(){
+  if (jlptLoading) return jlptLoading;
+  jlptLoading = (async () => {
+    jlptMap = new Map();
+    // fastest path: locally stored lists from the server (downloaded once, kept on disk)
+    if (LOCAL){
+      try{
+        const r = await fetch('/jlpt');
+        if (r.ok){
+          const obj = await r.json();
+          for (const [k, v] of Object.entries(obj)) jlptMap.set(k, v);
+          dlog(`JLPT lists loaded from local storage: ${jlptMap.size} entries`, 'ok');
+          if (jlptMap.size > 5000) return jlptMap;
+        }
+      }catch(e){}
+    }
+    // hardest first, so easier levels overwrite duplicates (a word known at N5 counts as N5)
+    for (const lv of ['n1', 'n2', 'n3', 'n4', 'n5']){
+      const jobs = [];
+      for (const src of JLPT_CSV_SOURCES) jobs.push((async () => {
+        try{
+          const r = await fetch(src(lv));
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          const rows = parseCSV(await r.text()).slice(1);
+          for (const row of rows){
+            const expr = row[0], reading = row[1], meaning = row[2];
+            if (!expr) continue;
+            const rd = kata2hira(normJP((reading || '').split(/[;、]/)[0] || ''));
+            for (let e of expr.split(/[;、]/)){ addEntry(normJP(e), rd, lv, meaning); }
+          }
+        }catch(e){}
+      })());
+      jobs.push((async () => {
+        for (const src of JLPT_JSON_SOURCES){
+          try{
+            const r = await fetch(src(lv));
+            if (!r.ok) continue;
+            const n = ingestJson(await r.json(), lv);
+            if (n > 50){ dlog(`extra JSON source ok for ${lv}: ${n} words`, 'ok'); break; }
+          }catch(e){}
+        }
+      })());
+      await Promise.all(jobs);
+    }
+    dlog(`JLPT lists loaded: ${jlptMap.size} entries`, 'ok');
+    return jlptMap;
+  })();
+  return jlptLoading;
+}
+function jlptLookup(base, surface, reading){
+  if (!jlptMap) return null;
+  return jlptMap.get(normJP(base)) || jlptMap.get(normJP(surface || '')) ||
+         (reading && reading.length > 1 ? jlptMap.get(reading) : null);
+}
+
+/* ---------- deck ---------- */
+const GOOD_POS = new Set(['名詞', '動詞', '形容詞', '副詞']);
+const BAD_DETAIL = new Set(['数', '非自立', '接尾', '代名詞', '固有名詞']);
+function buildDeck(){
+  const seen = new Map();
+  for (const sen of sentences){
+    for (const tk of tokenizer.tokenize(sen.text)){
+      if (!GOOD_POS.has(tk.pos)) continue;
+      if (BAD_DETAIL.has(tk.pos_detail_1)) continue;
+      const base = (tk.basic_form && tk.basic_form !== '*') ? tk.basic_form : tk.surface_form;
+      if (!hasJP(base)) continue;
+      if (base.length === 1 && !hasKanji(base)) continue;
+      const e = seen.get(base);
+      if (e){ e.count++; continue; }
+      const reading = (tk.reading && tk.reading !== '*') ? kata2hira(tk.reading) : '';
+      const jl = jlptLookup(base, tk.surface_form, reading);
+      let level = jl ? jl.level : (levelCache.get(base) || 'other');
+      seen.set(base, {
+        word: base,
+        reading: reading || (jl ? jl.reading : ''),
+        pos: tk.pos,
+        count: 1,
+        level,
+        meaning: jl ? jl.meaning : null,
+      });
+    }
+  }
+  deck = [...seen.values()].sort((a, b) => b.count - a.count);
+}
+
+/* ---------- Jisho level enrichment for unmatched words ---------- */
+let enriching = false;
+async function enrichLevels(){
+  if (enriching) return;
+  enriching = true;
+  const note = $('#enrichNote');
+  try{
+    const targets = deck.filter(c => c.level === 'other' && !levelCache.has(c.word));
+    let left = targets.length;
+    const worker = async () => {
+      while (targets.length){
+        const c = targets.shift();
+        note.textContent = `辞書でレベルを確認中… classifying via dictionary (${left} left)`;
+        const entry = await lookup(c.word);
+        let lvl = 'other';
+        if (entry && entry.jlpt && entry.jlpt.length){
+          // pick the easiest listed level (highest N number)
+          lvl = entry.jlpt.map(s => s.replace('jlpt-', '')).sort((a, b) => +b[1] - +a[1])[0];
+        }
+        levelCache.set(c.word, lvl);
+        saveLevelCache();
+        if (lvl !== 'other'){
+          c.level = lvl;
+          if (!c.meaning && entry && entry.senses.length)
+            c.meaning = entry.senses.map(s => s.gloss).slice(0, 2).join(' · ');
+        }
+        left--;
+        if (left % 5 === 0) renderChips();
+        await sleep(120);
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]); // 3 parallel workers
+    note.textContent = '';
+    renderChips();
+  }finally{
+    enriching = false;
+    note.textContent = '';
+  }
+}
+
+/* ---------- card UI ---------- */
+const LEVELS = [['all','ALL'], ['n5','N5'], ['n4','N4'], ['n3','N3'], ['n2','N2'], ['n1','N1'], ['rare','レア rare'], ['other','その他']];
+const isRare = c => c.count === 1 && (c.level === 'n1' || c.level === 'other');
+const inFilter = c => filter === 'all' ? true : (filter === 'rare' ? isRare(c) : c.level === filter);
+
+function renderChips(){
+  const counts = {all: 0, rare: 0};
+  for (const c of deck){
+    if (knownSet.has(c.word)) continue;
+    counts.all++;
+    counts[c.level] = (counts[c.level] || 0) + 1;
+    if (isRare(c)) counts.rare++;
+  }
+  $('#chips').innerHTML = LEVELS.map(([k, label]) =>
+    `<span class="chip ${filter === k ? 'on' : ''}" data-k="${k}">${label}<small>${counts[k] || 0}</small></span>`).join('');
+  $('#chips').querySelectorAll('.chip').forEach(ch =>
+    ch.addEventListener('click', () => { filter = ch.dataset.k; rebuildQueue(); }));
+}
+function rebuildQueue(){
+  queue = deck.filter(c => !knownSet.has(c.word) && inFilter(c));
+  qi = 0; flipped = false;
+  renderChips();
+  renderCard();
+}
+function shuffleQueue(){
+  for (let i = queue.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [queue[i], queue[j]] = [queue[j], queue[i]];
+  }
+  qi = 0; flipped = false; renderCard();
+}
+function levelLabel(l){ return l === 'other' ? 'その他 · not in JLPT lists' : l.toUpperCase(); }
+
+async function renderCard(){
+  const stage = $('#cardStage'), empty = $('#cardEmpty');
+  if (!deck.length){ stage.style.display = 'none'; empty.style.display = 'block'; return; }
+  stage.style.display = 'flex'; empty.style.display = 'none';
+  const card = $('#card');
+  if (!queue.length){
+    card.innerHTML = `<div class="c-word" style="font-size:calc(34px*var(--cz))">全部覚えた！🎉</div>
+      <div class="c-meaning">Every word in this filter is marked known.<br>Go to the Read tab and listen with confidence.</div>`;
+    $('#cardProg').textContent = 'done';
+    return;
+  }
+  if (qi >= queue.length) qi = 0;
+  const c = queue[qi];
+  $('#cardProg').textContent = `${qi + 1} / ${queue.length} · known ${knownSet.size}`;
+  if (!flipped){
+    card.innerHTML = `
+      <span class="c-level">${levelLabel(c.level)}${isRare(c) ? ' · レア' : ''}</span>
+      <div class="c-word">${c.word}</div>
+      <div class="c-freq">appears ${c.count}× in this video · ${POS_EN[c.pos] || c.pos}</div>
+      <div class="c-hint">space / tap to reveal</div>`;
+  } else {
+    card.innerHTML = `
+      <span class="c-level">${levelLabel(c.level)}${isRare(c) ? ' · レア' : ''}</span>
+      <div class="c-word back">${c.word}</div>
+      <div class="c-reading">${c.reading || ''}</div>
+      <div class="c-meaning">${c.meaning ? c.meaning : '<span style="color:var(--dim)">looking up…</span>'}</div>
+      <img class="c-img" style="display:none" alt="">
+      <div class="c-hint">space = next card</div>`;
+    if (!c.meaning){
+      const entry = await lookup(c.word);
+      if (entry && entry.senses.length){
+        c.meaning = entry.senses.map(s => s.gloss).slice(0, 2).join(' · ');
+        if (!c.reading && entry.reading) c.reading = kata2hira(entry.reading);
+        if (entry.jlpt && entry.jlpt.length && c.level === 'other'){
+          c.level = entry.jlpt.map(s => s.replace('jlpt-', '')).sort((a, b) => +b[1] - +a[1])[0];
+          levelCache.set(c.word, c.level); saveLevelCache();
+          renderChips();
+        }
+      } else c.meaning = '(not found in dictionary)';
+      if (flipped && queue[qi] === c) renderCard();
+      return;
+    }
+    // picture found from the word's meaning/description
+    const cardToken = c.word + '|' + qi;
+    findImage(c.word, c.meaning).then(src => {
+      if (!src || !flipped || !queue[qi] || queue[qi].word !== c.word) return;
+      const img = card.querySelector('.c-img');
+      if (img){ img.onload = () => { img.style.display = 'block'; }; img.src = src; }
+    });
+  }
+}
+function nextCard(){
+  if (!queue.length) return;
+  qi = (qi + 1) % queue.length;
+  flipped = false;
+  renderCard();
+}
+$('#card').addEventListener('click', () => {
+  if (!flipped){ flipped = true; renderCard(); }
+  else nextCard();
+});
+$('#againBtn').addEventListener('click', () => {
+  if (!queue.length) return;
+  queue.push(queue.splice(qi, 1)[0]);
+  flipped = false; renderCard();
+});
+$('#knownBtn').addEventListener('click', () => {
+  if (!queue.length) return;
+  knownSet.add(queue[qi].word); saveKnown();
+  queue.splice(qi, 1);
+  flipped = false; renderChips(); renderCard();
+});
+$('#shuffleBtn').addEventListener('click', shuffleQueue);
+$('#resetBtn').addEventListener('click', () => {
+  if (!confirm('Clear all known words?')) return;
+  knownSet.clear(); saveKnown(); rebuildQueue();
+});
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+  if (curTab === 'read' && e.code === 'Space'){
+    e.preventDefault();
+    highlightCurrentWord();
+    return;
+  }
+  if (curTab !== 'cards') return;
+  if (e.code === 'Space'){
+    e.preventDefault();
+    if (!flipped){ flipped = true; renderCard(); }  // 1st space: reveal meaning
+    else nextCard();                                 // 2nd space: next flashcard
+  }
+  else if (e.key === '1') $('#againBtn').click();
+  else if (e.key === '2') $('#knownBtn').click();
+  else if (e.key === 'ArrowRight') nextCard();
+});
+
+/* ================= tabs ================= */
+function showTab(which){
+  curTab = which;
+  $('#readView').style.display = which === 'read' ? 'block' : 'none';
+  $('#cardsView').style.display = which === 'cards' ? 'block' : 'none';
+  $('#storiesView').style.display = which === 'stories' ? 'block' : 'none';
+  $('#tabRead').classList.toggle('on', which === 'read');
+  $('#tabCards').classList.toggle('on', which === 'cards');
+  $('#tabStories').classList.toggle('on', which === 'stories');
+  if (which === 'cards' && sentences.length){
+    (async () => {
+      await loadJLPT();
+      if (!deck.length) buildDeck();
+      rebuildQueue();
+      enrichLevels();
+    })();
+  }
+}
+$('#tabRead').addEventListener('click', () => showTab('read'));
+$('#tabCards').addEventListener('click', () => showTab('cards'));
+$('#tabStories').addEventListener('click', () => showTab('stories'));
+
+/* ================= auto-hiding header ================= */
+const headerEl = document.querySelector('header');
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (y < 80) headerEl.classList.remove('hide');
+  else if (y > lastY + 4) headerEl.classList.add('hide');
+  else if (y < lastY - 4) headerEl.classList.remove('hide');
+  lastY = y;
+}, {passive: true});
+$('#topZone').addEventListener('mouseenter', () => headerEl.classList.remove('hide'));
+headerEl.addEventListener('mouseenter', () => headerEl.classList.remove('hide'));
+
+/* ================= scenario stories ================= */
+const STORIES = {
+  '会議 Business meeting': '月曜日の朝九時、田中さんは会議室に入りました。今日は新しい商品について大切な会議があります。部長はまず、先月の売り上げを報告しました。「残念ながら、売り上げは目標より十パーセント低かったです。」田中さんは資料を見ながら、原因を説明しました。「競争が激しくなって、値段を下げる必要があると思います。」同僚の佐藤さんは別の意見を出しました。「値段より、品質と宣伝のほうが重要ではないでしょうか。」部長はうなずいて、二つの案を比較することにしました。「来週までに、それぞれの計画書を準備してください。」会議の最後に、スケジュールと予算を確認しました。田中さんは責任者として、新しいプロジェクトを担当することになりました。会議が終わった後、みんなで昼ご飯を食べに行きました。',
+  'レストラン Restaurant': '金曜日の夜、由美さんは友達とレストランへ行きました。店員が「いらっしゃいませ。何名様ですか。」と聞きました。「二人です。窓側の席をお願いします。」席に座って、メニューをゆっくり見ました。由美さんは魚の定食を注文しました。友達はステーキとサラダを選びました。「お飲み物はいかがですか。」「私は赤ワインをください。」料理はとても美味しくて、二人は大満足でした。デザートに抹茶のアイスクリームを頼みました。最後に会計をお願いして、カードで払いました。「ごちそうさまでした。また来ます。」',
+  '空港 Airport & travel': '夏休みに、健太さんは初めて一人で海外旅行をしました。空港に着いて、まずチェックインカウンターへ行きました。「パスポートと予約番号をお願いします。」荷物を預けて、搭乗券を受け取りました。保安検査場は混んでいて、三十分も並びました。免税店でお土産を買って、搭乗口へ向かいました。飛行機は定刻通りに出発しました。機内で映画を見たり、食事をしたりしました。目的地に到着した後、入国審査を受けました。「旅行の目的は何ですか。」「観光です。一週間滞在します。」税関を通って、やっと空港の外に出ました。新しい国の空気は、少し違う匂いがしました。',
+  '病院 At the doctor': '朝から頭が痛くて、熱もあったので、正人さんは病院へ行きました。受付で保険証を出して、問診票に症状を書きました。待合室で三十分ほど待ちました。「正人さん、診察室へどうぞ。」医者は熱を測って、喉を見ました。「風邪ですね。念のため、インフルエンザの検査もしておきましょう。」幸い、結果は陰性でした。「薬を三日分出します。水分を取って、ゆっくり休んでください。」薬局で薬を受け取って、家に帰りました。温かいスープを飲んで、早く寝ました。次の日、熱は下がって、気分もずっと良くなりました。',
+  '面接 Job interview': '香織さんは今日、貿易会社の面接を受けます。少し緊張しながら、受付で名前を伝えました。「どうぞ、こちらの部屋でお待ちください。」面接官は三人いました。「まず、自己紹介をお願いします。」「大学で経済を専攻しました。留学の経験もあります。」「なぜこの会社を選びましたか。」「海外との取引が多く、語学力を活かせると思ったからです。」「あなたの長所と短所を教えてください。」「長所は計画的なところです。短所は少し心配性なところですが、丁寧に確認することで補っています。」面接の最後に、給料と勤務時間について質問しました。一週間後、採用の連絡が来ました。香織さんは嬉しくて、すぐ家族に電話しました。',
+  'コンビニ Convenience store': '仕事の帰りに、翔太さんはコンビニに寄りました。まず、冷たいお茶とおにぎりを二つ選びました。新商品のチョコレートも気になって、かごに入れました。雑誌のコーナーで、少し立ち読みをしました。レジに並んでいると、店員が「お弁当は温めますか。」と聞きました。「はい、お願いします。」ポイントカードを出して、電子マネーで払いました。袋は有料なので、エコバッグを使いました。外は雨が降り始めていました。傘を買うか迷いましたが、走って帰ることにしました。',
+};
+function renderStoryChips(){
+  $('#storyChips').innerHTML = Object.keys(STORIES).map(k =>
+    `<span class="chip" data-k="${k}">${k}</span>`).join('');
+  $('#storyChips').querySelectorAll('.chip').forEach(ch =>
+    ch.addEventListener('click', () => loadStory(ch.dataset.k, STORIES[ch.dataset.k])));
+}
+renderStoryChips();
+async function loadStory(title, text){
+  const parts = text.replace(/\s+/g, '').split(/(?<=[。！？])/).filter(s => s.trim());
+  if (!parts.length) return;
+  segments = parts.map(p => ({t: -1, text: p}));
+  $('#fallback').style.display = 'none';
+  $('#playerWrap').style.display = 'none';
+  logEl.innerHTML = ''; logEl.style.display = 'none';
+  $('#vtitle').textContent = title;
+  showTab('read');
+  await loadTokenizer();
+  setStatus('');
+  renderBook();
+  $('#vmeta').textContent = `${sentences.length} sentences · story mode`;
+  deck = []; queue = [];
+  loadJLPT().then(() => { buildDeck(); rebuildQueue(); });
+}
+$('#loadStoryBtn').addEventListener('click', () => {
+  const t = $('#customStory').value.trim();
+  if (!t) return;
+  loadStory('自分の物語 — Your story', t);
+});
+
+/* ---------- AI story generation ---------- */
+function cleanAIStory(txt){
+  // keep only lines that contain Japanese; strip markdown noise
+  return txt.split('\n')
+    .map(l => l.replace(/[#*_>`]/g, '').trim())
+    .filter(l => hasJP(l))
+    .join('');
+}
+$('#genStoryBtn').addEventListener('click', async () => {
+  const topic = $('#storyTopic').value.trim();
+  const level = $('#storyLevel').value;
+  const st = $('#storyStatus');
+  if (!topic){ st.textContent = 'まずトピックを入力してください — describe your situation first.'; return; }
+  const btn = $('#genStoryBtn');
+  btn.disabled = true;
+  st.textContent = '✨ AIが物語を書いています… generating your story (10–30s)…';
+  const prompt = `Write a short story in Japanese at JLPT ${level} level about this situation: ${topic}. ` +
+    `Requirements: 12 to 16 sentences, natural everyday Japanese, use the common vocabulary a learner would need in this situation. ` +
+    `Output ONLY the Japanese story text — no title, no translation, no romaji, no notes, no furigana.`;
+  const routes = LOCAL
+    ? ['/story?prompt=' + encodeURIComponent(prompt),
+       'https://text.pollinations.ai/' + encodeURIComponent(prompt)]
+    : ['https://text.pollinations.ai/' + encodeURIComponent(prompt)];
+  let story = null, lastErr = '';
+  for (const url of routes){
+    try{
+      const c = new AbortController(); const t = setTimeout(() => c.abort(), 60000);
+      const r = await fetch(url, {signal: c.signal}); clearTimeout(t);
+      if (!r.ok){ lastErr = 'HTTP ' + r.status; continue; }
+      let txt = await r.text();
+      try{ const j = JSON.parse(txt); txt = j.story || txt; }catch(e){}
+      const cleaned = cleanAIStory(txt);
+      if (cleaned.length > 60){ story = cleaned; break; }
+      lastErr = 'response contained no Japanese story';
+    }catch(e){ lastErr = e.name === 'AbortError' ? 'timeout' : e.message; }
+  }
+  btn.disabled = false;
+  if (story){
+    st.textContent = '';
+    loadStory(`✨ ${topic} (${level})`, story);
+  } else {
+    st.textContent = `AI生成に失敗しました (${lastErr}) — try again, or use a ready-made story below.`;
+  }
+});
+
+/* ================= space bar: highlight the word being spoken ================= */
+let timeSample = {t: 0, at: 0, playing: false};
+setInterval(() => {
+  if (player && playerReady && player.getCurrentTime){
+    try{
+      timeSample = {t: player.getCurrentTime() * 1000, at: Date.now(),
+                    playing: player.getPlayerState && player.getPlayerState() === 1};
+    }catch(e){}
+  }
+}, 250);
+let curWordEl = null;
+function highlightCurrentWord(){
+  if (curWordEl){ curWordEl.classList.remove('wcur'); curWordEl = null; }
+  if (activeIdx < 0) return;
+  const el = book.querySelector(`.sent[data-i="${activeIdx}"]`);
+  if (!el) return;
+  const ws = el.querySelectorAll('.w');
+  if (!ws.length) return;
+  let prog = 0;
+  const st = sentences[activeIdx].t;
+  if (player && playerReady && st >= 0){
+    const now = timeSample.t + (timeSample.playing ? Date.now() - timeSample.at : 0) + syncOff;
+    let en = null;
+    for (let k = activeIdx + 1; k < sentences.length; k++){ if (sentences[k].t >= 0){ en = sentences[k].t; break; } }
+    if (en === null) en = st + 6000;
+    prog = Math.min(0.98, Math.max(0, (now - st) / Math.max(600, en - st)));
+  }
+  curWordEl = ws[Math.min(ws.length - 1, Math.floor(prog * ws.length))];
+  curWordEl.classList.add('wcur');
+}
+
+/* ================= main load flow ================= */
 async function loadVideo(){
   const vid = parseId($('#url').value.trim());
   if (!vid){ setStatus('有効なYouTube URLを入力してください — that doesn\'t look like a YouTube link.'); return; }
   $('#fallback').style.display = 'none';
-  reader.innerHTML = ''; $('#vtitle').textContent = ''; segments = []; blocks = []; activeIdx = -1;
+  book.innerHTML = ''; $('#vtitle').textContent = ''; $('#vmeta').textContent = '';
+  segments = []; sentences = []; deck = []; queue = []; activeIdx = -1;
   logEl.innerHTML = '';
   dlog('video id: ' + vid);
+  showTab('read');
   try{
     let segs = null;
     if (LOCAL){
@@ -569,22 +1322,24 @@ async function loadVideo(){
         const tm = html.match(/<title>(.*?)<\/title>/);
         if (tm) $('#vtitle').textContent = tm[1].replace(/ - YouTube$/, '').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
         tracks = extractTracks(html);
-        dlog(tracks ? `caption tracks: ${tracks.length} (${tracks.map(t=>t.languageCode).join(', ')})` : 'no captionTracks in page', tracks ? 'ok' : 'err');
+        dlog(tracks ? `caption tracks: ${tracks.length}` : 'no captionTracks in page', tracks ? 'ok' : 'err');
       }catch(e){ dlog('watch page unavailable', 'err'); }
       if (tracks && tracks.length){
         setStatus('字幕を取得中… fetching subtitles…');
-        segs = await fetchSegs(pickTrack(tracks));
+        segs = await fetchSegsBrowser(pickTrack(tracks));
       }
       if (!segs && html && (!tracks || !tracks.length)) throw new Error('この動画には字幕がありません。No captions on this video — pick one with Japanese CC, or paste subtitles manually below.');
-      if (!segs) throw new Error('字幕の取得に失敗しました。Subtitle fetch was blocked — run the local server (python3 nihongo_flow_server.py) for reliable fetching, or paste the transcript manually below.');
+      if (!segs) throw new Error('字幕の取得に失敗しました。Subtitle fetch was blocked — run the local server (node nihongo_flow_server.js) for reliable fetching, or paste the transcript manually below.');
       dlog(`✓ subtitles parsed: ${segs.length} lines`, 'ok');
     }
     segments = segs;
     await loadTokenizer();
     setStatus('');
-    renderSegments();
+    renderBook();
+    $('#vmeta').textContent = `${sentences.length} sentences · click any sentence to play from there · space = highlight current word`;
     logEl.style.display = 'none';
     mountPlayer(vid);
+    loadJLPT().then(() => { buildDeck(); rebuildQueue(); });
   }catch(err){
     dlog('FAILED: ' + err.message, 'err');
     setStatus(err.message);
@@ -595,7 +1350,7 @@ async function loadVideo(){
 $('#loadBtn').addEventListener('click', loadVideo);
 $('#url').addEventListener('keydown', e => { if (e.key === 'Enter') loadVideo(); });
 
-/* ---------------- manual paste fallback ---------------- */
+/* ================= manual paste ================= */
 $('#parseBtn').addEventListener('click', async () => {
   const text = $('#manualText').value.trim();
   if (!text) return;
@@ -612,7 +1367,6 @@ $('#parseBtn').addEventListener('click', async () => {
       if (body) segs.push({t, text: body});
     }
   } else {
-    // YouTube transcript panel format "0:05 テキスト" (timestamp may be on its own line)
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
     const tsRe = /^(?:(\d+):)?(\d{1,2}):(\d{2})$/;
     const tsInline = /^(?:(\d+):)?(\d{1,2}):(\d{2})\s+(.+)$/;
@@ -624,26 +1378,39 @@ $('#parseBtn').addEventListener('click', async () => {
       else if (pendingT !== null){ segs.push({t: pendingT, text: l}); pendingT = null; }
       else segs.push({t: -1, text: l});
     }
-    if (!anyTime) segs.forEach(s => s.t = -1); // no timestamps → no sync, steady text
+    if (!anyTime) segs.forEach(s => s.t = -1);
   }
   if (!segs.length){ setStatus('解析できませんでした — could not parse that text.'); return; }
   segments = segs;
   await loadTokenizer();
   setStatus('');
   $('#fallback').style.display = 'none';
-  renderSegments();
+  renderBook();
+  $('#vmeta').textContent = `${sentences.length} sentences (manual subtitles)`;
+  deck = []; queue = [];
+  loadJLPT().then(() => { buildDeck(); rebuildQueue(); });
 });
 
-/* ---------------- font size ---------------- */
-let fs = 22;
-$('#fsPlus').addEventListener('click', () => { fs = Math.min(34, fs + 2); document.documentElement.style.setProperty('--fs', fs + 'px'); });
-$('#fsMinus').addEventListener('click', () => { fs = Math.max(14, fs - 2); document.documentElement.style.setProperty('--fs', fs + 'px'); });
-
-/* ready indicator */
+/* ready indicators */
 document.querySelector('.logo').insertAdjacentHTML('beforeend',
-  ' <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#4ade80;vertical-align:middle;margin-left:2px" title="app ready"></span>');
+  ' <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);vertical-align:middle;margin-left:2px" title="app ready"></span>');
 if (LOCAL) document.querySelector('.logo').insertAdjacentHTML('beforeend',
-  ' <span style="font-size:10px;color:#4ade80;font-weight:500;margin-left:4px">local server ✓</span>');
+  ' <span style="font-size:10px;color:var(--ok);font-weight:500;margin-left:4px">local server ✓</span>' +
+  ' <span id="dictBadge" style="font-size:10px;color:var(--dim);font-weight:500;margin-left:4px"></span>');
+if (LOCAL){
+  (async () => {
+    const badge = document.getElementById('dictBadge');
+    for (let i = 0; i < 200; i++){
+      try{
+        const j = await (await fetch('/dictstatus')).json();
+        if (j.status === 'ready'){ badge.textContent = '辞書 dict ✓'; badge.style.color = 'var(--ok)'; return; }
+        if (j.status.startsWith('error')){ badge.textContent = 'dict: online fallback'; return; }
+        badge.textContent = j.status;
+      }catch(e){}
+      await sleep(3000);
+    }
+  })();
+}
 </script>
 </body>
 </html>
