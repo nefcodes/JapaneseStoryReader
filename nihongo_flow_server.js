@@ -32,7 +32,7 @@ function hostOk(u) {
   } catch { return false; }
 }
 
-async function grab(url, body, asBuffer) {
+async function grab(url, body, asBuffer, timeoutMs) {
   const r = await fetch(url, {
     method: body ? 'POST' : 'GET',
     headers: {
@@ -41,7 +41,7 @@ async function grab(url, body, asBuffer) {
       ...(body ? { 'Content-Type': 'application/json' } : {}),
     },
     body,
-    signal: AbortSignal.timeout(120000),
+    signal: AbortSignal.timeout(timeoutMs || 120000),
   });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   return asBuffer ? Buffer.from(await r.arrayBuffer()) : await r.text();
@@ -262,6 +262,60 @@ async function innertubeTracks(vid, name, client, log) {
   }
   return null;
 }
+/* Invidious / Piped public instances — they run their own YouTube unblocking,
+   which rescues subtitle fetching when this server's IP is blocked (cloud hosts) */
+const INVIDIOUS = [
+  'https://inv.nadeko.net',
+  'https://invidious.nerdvpn.de',
+  'https://yewtu.be',
+  'https://iv.melmac.space',
+  'https://invidious.f5.si',
+];
+const PIPED = ['https://pipedapi.kavin.rocks', 'https://pipedapi.adminforge.de'];
+function parseVTT(txt) {
+  const out = [];
+  const re = /(\d{2}):(\d{2}):(\d{2})[.,](\d{3})\s*-->/;
+  for (const block of txt.split(/\n\s*\n/)) {
+    const lines = block.trim().split('\n');
+    const ti = lines.findIndex(l => re.test(l));
+    if (ti < 0) continue;
+    const m = lines[ti].match(re);
+    const t = (+m[1] * 3600 + +m[2] * 60 + +m[3]) * 1000 + +m[4];
+    const text = lines.slice(ti + 1).join(' ').replace(/<[^>]+>/g, '').trim();
+    if (text && !/^WEBVTT/.test(text)) out.push({ t, text });
+  }
+  return out;
+}
+async function alternativeFrontends(vid, log) {
+  for (const base of INVIDIOUS) {
+    const host = new URL(base).hostname;
+    try {
+      const caps = JSON.parse(await grab(`${base}/api/v1/captions/${vid}`, null, false, 12000));
+      const list = caps.captions || caps;
+      if (!Array.isArray(list) || !list.length) { log.push(`invidious ${host}: no captions`); continue; }
+      const c = list.find(x => (x.language_code || x.languageCode) === 'ja')
+             || list.find(x => (x.label || '').includes('日本語')) || list[0];
+      const capUrl = c.url.startsWith('http') ? c.url : base + c.url;
+      const segs = parseVTT(await grab(capUrl, null, false, 12000));
+      if (segs.length) return { segs, source: 'invidious/' + host + ' / ' + (c.language_code || c.languageCode || '?') };
+      log.push(`invidious ${host}: empty vtt`);
+    } catch (e) { log.push(`invidious ${host}: ${e.message}`); }
+  }
+  for (const base of PIPED) {
+    const host = new URL(base).hostname;
+    try {
+      const j = JSON.parse(await grab(`${base}/streams/${vid}`, null, false, 12000));
+      const subs = j.subtitles || [];
+      if (!subs.length) { log.push(`piped ${host}: no captions`); continue; }
+      const c = subs.find(x => (x.code || '').startsWith('ja')) || subs[0];
+      const segs = parseVTT(await grab(c.url, null, false, 12000));
+      if (segs.length) return { segs, source: 'piped/' + host + ' / ' + (c.code || '?'), title: j.title || '' };
+      log.push(`piped ${host}: empty vtt`);
+    } catch (e) { log.push(`piped ${host}: ${e.message}`); }
+  }
+  return null;
+}
+
 async function getSubs(vid) {
   const log = [];
   let title = '';
@@ -296,6 +350,9 @@ async function getSubs(vid) {
       if (r) return r;
     }
   }
+  // last resort: alternative YouTube frontends with their own unblocking
+  const alt = await alternativeFrontends(vid, log);
+  if (alt) return { title: title || alt.title || '', segs: alt.segs, source: alt.source, log };
   return { error: 'すべてのルートで字幕を取得できませんでした — all routes failed', title, log };
 }
 
