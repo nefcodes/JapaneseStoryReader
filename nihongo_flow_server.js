@@ -1,28 +1,30 @@
 #!/usr/bin/env node
-/* NihongoFlow local server (Node.js 18+)
-   - serves the app
-   - extracts YouTube subtitles (multiple fallback routes)
-   - downloads & stores the FULL JMdict dictionary + JLPT N1–N5 lists locally,
-     then serves all word lookups offline via /dict and /jlpt
+/* NihongoFlow local server (Node.js 18+)- serves the app
+- extracts YouTube subtitles (multiple fallback routes)
+- downloads & stores the FULL JMdict dictionary + JLPT N1–N5 lists locally,
+    then serves all word lookups offline via /dict and /jlpt
    Run:  node nihongo_flow_server.js */
 'use strict';
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
+const os = require('os');
 const { execFile } = require('child_process');
 
 const PORT = +(process.env.PORT || 8765);   // cloud hosts inject PORT
 const CLOUD = !!process.env.PORT;
 const DIR = __dirname;
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
-           '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
+          '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 const ALLOWED = ['youtube.com', 'video.google.com', 'jisho.org', 'wikipedia.org', 'wikimedia.org', 'pollinations.ai'];
 const INNERTUBE_KEY = 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
 const CLIENTS = [
   ['android', { clientName: 'ANDROID', clientVersion: '20.10.38', androidSdkVersion: 30, hl: 'ja' }],
   ['ios', { clientName: 'IOS', clientVersion: '20.10.4', deviceModel: 'iPhone16,2', hl: 'ja' }],
   ['tv-embed', { clientName: 'TVHTML5_SIMPLY_EMBEDDED_PLAYER', clientVersion: '2.0', hl: 'ja' }],
+  ['web', { clientName: 'WEB', clientVersion: '2.20250101.00.00', hl: 'ja' }],
+  ['mweb', { clientName: 'MWEB', clientVersion: '2.20250101.01.00', hl: 'ja' }],
 ];
 
 function hostOk(u) {
@@ -33,18 +35,35 @@ function hostOk(u) {
 }
 
 async function grab(url, body, asBuffer, timeoutMs) {
+  const headers = {
+    'User-Agent': UA,
+    'Accept-Language': 'ja,en;q=0.8',
+    ...(body ? { 'Content-Type': 'application/json' } : {}),
+  };
+  // pre-accepted consent cookies — otherwise YouTube can answer with a
+  // consent page instead of the video page, which breaks parsing
+  if (/youtube\.com|google\.com/.test(url)) headers.Cookie = 'CONSENT=YES+cb; SOCS=CAI';
   const r = await fetch(url, {
     method: body ? 'POST' : 'GET',
-    headers: {
-      'User-Agent': UA,
-      'Accept-Language': 'ja,en;q=0.8',
-      ...(body ? { 'Content-Type': 'application/json' } : {}),
-    },
-    body,
+    headers, body,
     signal: AbortSignal.timeout(timeoutMs || 120000),
   });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   return asBuffer ? Buffer.from(await r.arrayBuffer()) : await r.text();
+}
+/* retry helper: transient failures (429 rate limit, network blips) get a
+   second and third chance with a short pause between attempts */
+async function grabRetry(url, body, asBuffer, timeoutMs, tries) {
+  let last;
+  for (let i = 0; i < (tries || 3); i++) {
+    try { return await grab(url, body, asBuffer, timeoutMs); }
+    catch (e) {
+      last = e;
+      if (!/HTTP (429|5\d\d)|fetch failed|timeout/i.test(e.message)) throw e;
+      await new Promise(r => setTimeout(r, 1200 * (i + 1)));
+    }
+  }
+  throw last;
 }
 
 /* ================= local dictionary (JMdict) ================= */
@@ -185,6 +204,87 @@ async function ensureData() {
   }
 }
 
+/* ================= kanji details (KANJIDIC2) + radicals (KRADFILE) ================= */
+
+const KANJIDIC_FILE = path.join(DIR, 'kanjidic-index.json');
+const KRAD_FILE = path.join(DIR, 'krad-index.json');
+const KANJIDIC_URLS = [
+  'https://www.edrdg.org/kanjidic/kanjidic2.xml.gz',
+  'http://ftp.edrdg.org/pub/Nihongo/kanjidic2.xml.gz',
+];
+const KRAD_SOURCES = [
+  ['https://ftp.edrdg.org/pub/Nihongo/kradfile.gz', 'http://ftp.edrdg.org/pub/Nihongo/kradfile.gz'],
+  ['https://ftp.edrdg.org/pub/Nihongo/kradfile2.gz', 'http://ftp.edrdg.org/pub/Nihongo/kradfile2.gz'],
+];
+let kanjiDic = null, krad = null, kanjiStatus = 'not started';
+
+function parseKanjidic(xml) {
+  const out = {};
+  const re = /<character>([\s\S]*?)<\/character>/g;
+  let m;
+  while ((m = re.exec(xml))) {
+    const c = m[1];
+    const lit = (c.match(/<literal>(.*?)<\/literal>/) || [])[1];
+    if (!lit) continue;
+    out[lit] = {
+      s: +((c.match(/<stroke_count>(\d+)/) || [])[1] || 0),
+      g: +((c.match(/<grade>(\d+)/) || [])[1] || 0),
+      j: +((c.match(/<jlpt>(\d)/) || [])[1] || 0),
+      on: [...c.matchAll(/<reading r_type="ja_on">([^<]+)</g)].map(x => x[1]).slice(0, 4),
+      kun: [...c.matchAll(/<reading r_type="ja_kun">([^<]+)</g)].map(x => x[1]).slice(0, 5),
+      m: [...c.matchAll(/<meaning>([^<]+)</g)].map(x => x[1]).slice(0, 6), // no-attr = English
+    };
+  }
+  return out;
+}
+function parseKrad(txt, map) {
+  for (const line of txt.split('\n')) {
+    if (!line || line.startsWith('#')) continue;
+    const [k, rest] = line.split(' : ');
+    if (k && rest) map[k.trim()] = rest.trim().split(/\s+/);
+  }
+}
+async function grabFirst(urls, asBuffer) {
+  let last;
+  for (const u of urls) { try { return await grab(u, null, asBuffer); } catch (e) { last = e; } }
+  throw last;
+}
+async function ensureKanjiData() {
+  try {
+    if (fs.existsSync(KANJIDIC_FILE)) {
+      kanjiDic = JSON.parse(fs.readFileSync(KANJIDIC_FILE, 'utf8'));
+      console.log(`✓ kanji dictionary loaded from disk (${Object.keys(kanjiDic).length} characters)`);
+    } else {
+      console.log('downloading KANJIDIC2 kanji dictionary (~1.5 MB, one time)…');
+      const xml = zlib.gunzipSync(await grabFirst(KANJIDIC_URLS, true)).toString('utf8');
+      kanjiDic = parseKanjidic(xml);
+      fs.writeFileSync(KANJIDIC_FILE, JSON.stringify(kanjiDic));
+      console.log(`✓ kanji dictionary ready (${Object.keys(kanjiDic).length} characters)`);
+    }
+    if (fs.existsSync(KRAD_FILE)) {
+      krad = JSON.parse(fs.readFileSync(KRAD_FILE, 'utf8'));
+      console.log(`✓ radical decompositions loaded from disk (${Object.keys(krad).length} kanji)`);
+    } else {
+      console.log('downloading radical decompositions (KRADFILE)…');
+      krad = {};
+      for (const urls of KRAD_SOURCES) {
+        try {
+          const buf = zlib.gunzipSync(await grabFirst(urls, true));
+          parseKrad(new TextDecoder('euc-jp').decode(buf), krad); // KRADFILE is EUC-JP encoded
+        } catch (e) { console.log('  krad source failed:', e.message); }
+      }
+      if (Object.keys(krad).length) {
+        fs.writeFileSync(KRAD_FILE, JSON.stringify(krad));
+        console.log(`✓ radical decompositions ready (${Object.keys(krad).length} kanji)`);
+      }
+    }
+    kanjiStatus = 'ready';
+  } catch (e) {
+    kanjiStatus = 'error: ' + e.message;
+    console.log('⚠ kanji data setup failed:', e.message);
+  }
+}
+
 /* ================= subtitle extraction ================= */
 
 function bracketSlice(s, key) {
@@ -202,6 +302,14 @@ function pickTrack(tracks) {
   return tracks.find(t => t.languageCode === 'ja' && t.kind !== 'asr')
       || tracks.find(t => t.languageCode === 'ja')
       || tracks[0];
+}
+/* robust ordering: human ja subs first, then auto ja, then anything else —
+   we try each in turn instead of betting everything on one track */
+function orderedTracks(tracks) {
+  const manualJa = tracks.filter(t => t.languageCode === 'ja' && t.kind !== 'asr');
+  const asrJa = tracks.filter(t => t.languageCode === 'ja' && t.kind === 'asr');
+  const rest = tracks.filter(t => t.languageCode !== 'ja');
+  return [...manualJa, ...asrJa, ...rest].slice(0, 4);
 }
 function withFmt(url, fmt) {
   url = url.replace(/[&?]fmt=[^&]*/, '');
@@ -233,7 +341,7 @@ async function segsFromTrack(track, log) {
   base = base.replace(/\\u0026/g, '&');
   for (const [fmt, parser] of [['json3', parseJson3], ['', parseXmlCaps]]) {
     try {
-      const txt = await grab(withFmt(base, fmt));
+      const txt = await grabRetry(withFmt(base, fmt), null, false, 25000, 2);
       if (txt && txt.length > 30) {
         const segs = parser(txt);
         if (segs.length) return segs;
@@ -270,8 +378,15 @@ const INVIDIOUS = [
   'https://yewtu.be',
   'https://iv.melmac.space',
   'https://invidious.f5.si',
+  'https://invidious.privacyredirect.com',
+  'https://yt.artemislena.eu',
 ];
-const PIPED = ['https://pipedapi.kavin.rocks', 'https://pipedapi.adminforge.de'];
+const PIPED = [
+  'https://pipedapi.kavin.rocks',
+  'https://pipedapi.adminforge.de',
+  'https://api.piped.private.coffee',
+  'https://pipedapi.ducks.party',
+];
 function parseVTT(txt) {
   const out = [];
   const re = /(\d{2}):(\d{2}):(\d{2})[.,](\d{3})\s*-->/;
@@ -321,7 +436,7 @@ async function getSubs(vid) {
   let title = '';
   const sources = [];
   try {
-    const page = await grab(`https://www.youtube.com/watch?v=${vid}&hl=ja`);
+    const page = await grabRetry(`https://www.youtube.com/watch?v=${vid}&hl=ja`, null, false, 30000, 3);
     const m = page.match(/<title>([\s\S]*?)<\/title>/);
     if (m) title = unesc(m[1]).replace(/ - YouTube$/, '').trim();
     const arr = bracketSlice(page, '"captionTracks":');
@@ -331,11 +446,12 @@ async function getSubs(vid) {
     log.push(`watch page: ${e.message}`);
   }
   const tryTracks = async (name, tracks) => {
-    const tr = pickTrack(tracks);
-    const segs = await segsFromTrack(tr, log);
-    if (segs) {
-      const lang = (tr.languageCode || '?') + (tr.kind === 'asr' ? ' (auto)' : '');
-      return { title, segs, source: `${name} / ${lang}`, log };
+    for (const tr of orderedTracks(tracks)) {
+      const segs = await segsFromTrack(tr, log);
+      if (segs) {
+        const lang = (tr.languageCode || '?') + (tr.kind === 'asr' ? ' (auto)' : '');
+        return { title, segs, source: `${name} / ${lang}`, log };
+      }
     }
     return null;
   };
@@ -354,6 +470,146 @@ async function getSubs(vid) {
   const alt = await alternativeFrontends(vid, log);
   if (alt) return { title: title || alt.title || '', segs: alt.segs, source: alt.source, log };
   return { error: 'すべてのルートで字幕を取得できませんでした — all routes failed', title, log };
+}
+
+/* ================= reading library: NHK Easy News + Aozora Bunko books ================= */
+
+function stripHtml(s) {
+  return unesc(unesc(
+    s.replace(/<rt>[\s\S]*?<\/rt>/g, '')     // drop furigana readings
+     .replace(/<rp>[\s\S]*?<\/rp>/g, '')
+     .replace(/<br\s*\/?>/gi, '\n')
+     .replace(/<\/p>/gi, '\n')
+     .replace(/<[^>]+>/g, '')
+  )).replace(/［＃[^］]*］/g, '');            // drop Aozora typesetting notes
+}
+
+async function readingNews() {
+  const txt = await grab('https://www3.nhk.or.jp/news/easy/news-list.json');
+  const data = JSON.parse(txt.replace(/^﻿/, ''));
+  const out = [];
+  for (const day of (Array.isArray(data) ? data : [data])) {
+    for (const key of Object.keys(day)) {
+      for (const a of day[key] || []) {
+        if (!a.news_id) continue;
+        let img = a.news_web_image_uri || '';
+        if (img && !img.startsWith('http')) img = `https://www3.nhk.or.jp/news/easy/${a.news_id}/${img}`;
+        out.push({ id: a.news_id, title: stripHtml(String(a.title || '')), date: String(a.news_prearranged_time || '').slice(0, 10), img });
+      }
+    }
+  }
+  out.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return { articles: out.slice(0, 42) };
+}
+
+async function readingArticle(id) {
+  const html = await grab(`https://www3.nhk.or.jp/news/easy/${id}/${id}.html`);
+  const title = stripHtml(((html.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '').split('|')[0].trim());
+  let body = null;
+  for (const re of [
+    /<div[^>]*id="js-article-body"[^>]*>([\s\S]*?)<\/div>/,
+    /<div[^>]*class="[^"]*article-main__body[^"]*"[^>]*>([\s\S]*?)<\/div>/,
+    /<div[^>]*class="[^"]*article-body[^"]*"[^>]*>([\s\S]*?)<\/div>/,
+  ]) {
+    const m = html.match(re);
+    if (m) { body = m[1]; break; }
+  }
+  if (!body) return { error: 'could not parse this article' };
+  const paragraphs = stripHtml(body).split('\n').map(s => s.trim()).filter(Boolean);
+  if (!paragraphs.length) return { error: 'article was empty' };
+  return { title, paragraphs };
+}
+
+async function readingBook(url) {
+  if (!url.startsWith('https://www.aozora.gr.jp/')) return { error: 'only aozora.gr.jp books allowed' };
+  const buf = await grab(url, null, true);
+  let html = new TextDecoder('utf-8', { fatal: false }).decode(buf);
+  if (/charset=["']?shift_jis/i.test(html)) html = new TextDecoder('shift_jis').decode(buf);
+  const title = stripHtml(((html.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '').trim());
+  const m = html.match(/<div class="main_text">([\s\S]*?)<\/div>/);
+  if (!m) return { error: 'could not find the book text' };
+  // walk the body, keeping the book's own illustrations in position
+  const segs = [];
+  const pushText = chunk => {
+    for (const line of stripHtml(chunk).split('\n').map(s => s.trim()).filter(Boolean))
+      segs.push({ t: -1, text: line });
+  };
+  let rest = m[1];
+  const imgRe = /<img[^>]*src="([^"]+)"[^>]*>/;
+  let im;
+  while ((im = rest.match(imgRe))) {
+    pushText(rest.slice(0, im.index));
+    try { segs.push({ t: -1, img: new URL(im[1], url).href }); } catch {}
+    rest = rest.slice(im.index + im[0].length);
+  }
+  pushText(rest);
+  if (!segs.some(s => s.text)) return { error: 'book text was empty' };
+  return { title, segs };
+}
+
+/* ================= Whisper transcription (high accuracy, local AI) =================
+   Needs two free tools (one-time):  brew install yt-dlp whisper-cpp
+   First run also downloads a speech model (~466 MB). Results are cached per video. */
+
+const TRANS_DIR = path.join(DIR, 'transcripts');
+const WHISPER_MODELS = ['ggml-medium.bin', 'ggml-small.bin']; // uses the best one present
+const WHISPER_DL_NAME = 'ggml-small.bin';
+const WHISPER_DL_URL = 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.bin';
+
+function run(cmd, args, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    execFile(cmd, args, { timeout: timeoutMs || 600000, maxBuffer: 64 * 1024 * 1024 },
+      (e, stdout, stderr) => e ? reject(new Error(String(stderr || e.message).slice(-400))) : resolve(stdout));
+  });
+}
+async function hasCmd(cmd) {
+  try { await run('which', [cmd], 5000); return true; } catch { return false; }
+}
+async function transcribe(vid) {
+  const cacheF = path.join(TRANS_DIR, vid + '.json');
+  if (fs.existsSync(cacheF)) return JSON.parse(fs.readFileSync(cacheF, 'utf8'));
+
+  if (!await hasCmd('yt-dlp')) return { error: 'yt-dlp is not installed. Run:  brew install yt-dlp' };
+  const wbin = (await hasCmd('whisper-cli')) ? 'whisper-cli'
+             : (await hasCmd('whisper-cpp')) ? 'whisper-cpp' : null;
+  if (!wbin) return { error: 'whisper is not installed. Run:  brew install whisper-cpp' };
+
+  let model = WHISPER_MODELS.map(m => path.join(DIR, m)).find(p => fs.existsSync(p));
+  if (!model) {
+    console.log('downloading whisper model (~466 MB, one time only)…');
+    model = path.join(DIR, WHISPER_DL_NAME);
+    fs.writeFileSync(model, await grab(WHISPER_DL_URL, null, true, 1800000));
+    console.log('✓ whisper model saved');
+  }
+
+  const base = path.join(os.tmpdir(), 'nf-' + vid);
+  console.log(`[whisper] downloading audio for ${vid}…`);
+  await run('yt-dlp', ['-x', '--audio-format', 'wav',
+    '--postprocessor-args', 'ffmpeg:-ar 16000 -ac 1',
+    '-o', base + '.%(ext)s', '--force-overwrites',
+    'https://www.youtube.com/watch?v=' + vid], 600000);
+
+  console.log('[whisper] transcribing (this can take a few minutes)…');
+  // beam search width 5 = noticeably better kanji choices than greedy decoding
+  await run(wbin, ['-m', model, '-l', 'ja', '-bs', '5', '-f', base + '.wav', '-oj', '-of', base], 3600000);
+
+  const wj = JSON.parse(fs.readFileSync(base + '.json', 'utf8'));
+  const segs = (wj.transcription || [])
+    .map(s => ({ t: Math.round((s.offsets && s.offsets.from) || 0), text: (s.text || '').trim() }))
+    .filter(s => s.text);
+  fs.unlink(base + '.wav', () => {});
+  fs.unlink(base + '.json', () => {});
+  if (!segs.length) return { error: 'whisper produced no text' };
+
+  let title = '';
+  try { title = (await run('yt-dlp', ['--print', 'title', '--skip-download',
+    'https://www.youtube.com/watch?v=' + vid], 60000)).trim(); } catch {}
+
+  const out = { title, segs, source: 'whisper/' + path.basename(model).replace(/^ggml-|\.bin$/g, ''), log: [] };
+  fs.mkdirSync(TRANS_DIR, { recursive: true });
+  fs.writeFileSync(cacheF, JSON.stringify(out));
+  console.log(`✓ whisper transcript cached (${segs.length} segments)`);
+  return out;
 }
 
 /* ================= HTTP server ================= */
@@ -391,6 +647,48 @@ const server = http.createServer(async (req, res) => {
       if (!jlptLocal) return sendJson(res, { error: 'not ready' }, 503);
       return sendJson(res, jlptLocal);
     }
+    if (u.pathname === '/audio') {
+      // real human pronunciation from the JapanesePod101 dictionary audio endpoint
+      const kanji = u.searchParams.get('kanji') || '';
+      const kana = u.searchParams.get('kana') || '';
+      if (!kanji) { res.writeHead(404); return res.end(); }
+      try {
+        const url = 'https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=' +
+          encodeURIComponent(kanji) + (kana ? '&kana=' + encodeURIComponent(kana) : '');
+        const r = await fetch(url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(15000) });
+        if (!r.ok) { res.writeHead(404); return res.end(); }
+        const buf = Buffer.from(await r.arrayBuffer());
+        // 52288 bytes = their known "audio not available" clip
+        if (buf.length === 52288 || buf.length < 2000) { res.writeHead(404); return res.end(); }
+        res.writeHead(200, {
+          'Content-Type': 'audio/mpeg', 'Content-Length': buf.length,
+          'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=604800',
+        });
+        return res.end(buf);
+      } catch (e) { res.writeHead(404); return res.end(); }
+    }
+    if (u.pathname === '/related') {
+      const vid = u.searchParams.get('v') || '';
+      if (!/^[\w-]{11}$/.test(vid)) return sendJson(res, { videos: [] });
+      try {
+        const ctx = { context: { client: { clientName: 'ANDROID', clientVersion: '20.10.38', androidSdkVersion: 30, hl: 'ja' } }, videoId: vid };
+        const j = JSON.parse(await grab(`https://www.youtube.com/youtubei/v1/next?key=${INNERTUBE_KEY}`, JSON.stringify(ctx)));
+        const out = [];
+        const seen = new Set([vid]);
+        (function walk(o) {
+          if (!o || typeof o !== 'object' || out.length >= 12) return;
+          if (o.videoId && o.title && !seen.has(o.videoId)) {
+            const t = typeof o.title === 'string' ? o.title
+              : (o.title.simpleText || (o.title.runs && o.title.runs.map(r => r.text).join('')) || '');
+            if (t) { seen.add(o.videoId); out.push({ id: o.videoId, title: t }); }
+          }
+          for (const k in o) walk(o[k]);
+        })(j);
+        return sendJson(res, { videos: out });
+      } catch (e) {
+        return sendJson(res, { videos: [], error: e.message });
+      }
+    }
     if (u.pathname === '/story') {
       const prompt = (u.searchParams.get('prompt') || '').slice(0, 1500);
       if (!prompt) return sendJson(res, { error: 'no prompt' }, 400);
@@ -400,6 +698,35 @@ const server = http.createServer(async (req, res) => {
       } catch (e) {
         return sendJson(res, { error: 'AI fetch failed: ' + e.message }, 502);
       }
+    }
+    if (u.pathname === '/reading/news') return sendJson(res, await readingNews());
+    if (u.pathname === '/reading/article') {
+      const id = u.searchParams.get('id') || '';
+      if (!/^[\w-]+$/.test(id)) return sendJson(res, { error: 'bad id' }, 400);
+      return sendJson(res, await readingArticle(id));
+    }
+    if (u.pathname === '/reading/book') {
+      return sendJson(res, await readingBook(u.searchParams.get('url') || ''));
+    }
+    if (u.pathname === '/transcribe') {
+      const vid = u.searchParams.get('v') || '';
+      if (!/^[\w-]{11}$/.test(vid)) return sendJson(res, { error: 'bad video id' }, 400);
+      return sendJson(res, await transcribe(vid));
+    }
+    if (u.pathname === '/kanji') {
+      const chars = [...(u.searchParams.get('chars') || '')].filter(ch => /[一-龯々]/.test(ch)).slice(0, 12);
+      const out = chars.map(ch => {
+        const d = (kanjiDic && kanjiDic[ch]) || {};
+        return {
+          char: ch,
+          strokes: d.s || null,
+          grade: d.g || null,
+          jlpt: d.j ? 'N' + d.j : null,
+          on: d.on || [], kun: d.kun || [], meanings: d.m || [],
+          radicals: (krad && krad[ch]) || [],
+        };
+      });
+      return sendJson(res, { kanji: out, status: kanjiStatus });
     }
     if (u.pathname === '/dictstatus') {
       return sendJson(res, { status: dictStatus, jlpt: !!jlptLocal, forms: dict ? Object.keys(dict).length : 0 });
@@ -455,5 +782,5 @@ server.listen(PORT, CLOUD ? '0.0.0.0' : '127.0.0.1', () => {
     const opener = process.platform === 'darwin' ? 'open' : (process.platform === 'win32' ? 'start' : 'xdg-open');
     setTimeout(() => execFile(opener, [url], () => {}), 700);
   }
-  ensureData(); // download dictionary + JLPT lists in background
+  ensureData().then(ensureKanjiData); // download dictionaries + kanji data in background
 });

@@ -5,116 +5,125 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NihongoFlow — Japanese Immersion Reader</title>
 <style>
-  :root, body[data-theme="dark"]{
+  :root, body[data-theme="nebula"]{
     --fs: 21px; --cz: 1;
     --jfont: 'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif;
-    --bg1:#0d0f14; --bg2:#1c2436;
-    --text:#e8eaf0; --dim:#8b93a7; --accent:#7aa2ff; --accent2:#ffd479;
-    --glass: rgba(28,30,38,.62);
-    --glass-border: rgba(255,255,255,.14);
-    --hdr: rgba(13,15,20,.72);
-    --panel: rgba(255,255,255,.06);
-    --panel-border: rgba(255,255,255,.12);
-    --btn-text:#0c1222;
-    --hl: rgba(122,162,255,.16);
-    --whl: rgba(255,212,121,.3);
-    --ok:#4ade80; --bad:#f87171;
-  }
-  body[data-theme="midnight"]{
-    --bg1:#000000; --bg2:#0a0a12;
-    --text:#e6e6ea; --dim:#7d7d8f; --accent:#5e8bff; --accent2:#e8b84a;
-    --glass: rgba(16,16,22,.72); --glass-border: rgba(255,255,255,.12);
-    --hdr: rgba(0,0,0,.8); --panel: rgba(255,255,255,.06); --panel-border: rgba(255,255,255,.11);
-    --btn-text:#000; --hl: rgba(94,139,255,.18); --whl: rgba(232,184,74,.28);
-    --ok:#4ade80; --bad:#f87171;
-  }
-  body[data-theme="nord"]{
-    --bg1:#2e3440; --bg2:#3b4252;
-    --text:#eceff4; --dim:#9aa5b5; --accent:#88c0d0; --accent2:#ebcb8b;
-    --glass: rgba(59,66,82,.68); --glass-border: rgba(236,239,244,.14);
-    --hdr: rgba(46,52,64,.8); --panel: rgba(236,239,244,.07); --panel-border: rgba(236,239,244,.14);
-    --btn-text:#2e3440; --hl: rgba(136,192,208,.18); --whl: rgba(235,203,139,.28);
-    --ok:#a3be8c; --bad:#bf616a;
-  }
-  body[data-theme="matcha"]{
-    --bg1:#101710; --bg2:#1b2a1c;
-    --text:#e4ecdf; --dim:#8ba183; --accent:#8fce8f; --accent2:#d9c26a;
-    --glass: rgba(23,33,23,.7); --glass-border: rgba(228,236,223,.13);
-    --hdr: rgba(16,23,16,.8); --panel: rgba(228,236,223,.06); --panel-border: rgba(228,236,223,.13);
-    --btn-text:#101710; --hl: rgba(143,206,143,.16); --whl: rgba(217,194,106,.26);
-    --ok:#8fce8f; --bad:#e08080;
-  }
-  body[data-theme="plum"]{
-    --bg1:#16101e; --bg2:#251733;
-    --text:#ece4f2; --dim:#9b8bb0; --accent:#bd93f9; --accent2:#f1c48a;
-    --glass: rgba(30,20,42,.7); --glass-border: rgba(236,228,242,.13);
-    --hdr: rgba(22,16,30,.8); --panel: rgba(236,228,242,.06); --panel-border: rgba(236,228,242,.13);
-    --btn-text:#16101e; --hl: rgba(189,147,249,.17); --whl: rgba(241,196,138,.26);
-    --ok:#69d98a; --bad:#f28080;
-  }
-  body[data-theme="light"]{
-    --bg1:#f2f4f8; --bg2:#e2e8f4;
-    --text:#1b1e28; --dim:#68708a; --accent:#3b64e0; --accent2:#a2701a;
-    --glass: rgba(255,255,255,.75);
-    --glass-border: rgba(0,0,0,.1);
-    --hdr: rgba(244,246,250,.82);
-    --panel: rgba(0,0,0,.05);
-    --panel-border: rgba(0,0,0,.12);
+    --bg1:#0b1020; --bg2:#111832;
+    --glow1:rgba(99,102,241,.22); --glow2:rgba(168,85,247,.16);
+    --text:#edf0fb; --dim:#8e97b8; --accent:#8b93ff; --accent2:#fbbf24;
+    --grad:linear-gradient(135deg,#6366f1,#a855f7);
+    --glass:rgba(21,28,50,.85);
+    --glass-border:rgba(160,170,255,.15);
+    --hdr:rgba(17,23,44,.88);
+    --panel:rgba(160,170,255,.08);
+    --panel-border:rgba(160,170,255,.16);
     --btn-text:#fff;
-    --hl: rgba(59,100,224,.14);
-    --whl: rgba(255,196,0,.35);
-    --ok:#15803d; --bad:#b91c1c;
+    --hl:rgba(124,110,250,.18);
+    --whl:rgba(168,85,247,.28);
+    --ok:#34d399; --bad:#f87171;
+    --shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 16px 44px rgba(3,6,20,.55);
   }
-  body[data-theme="sepia"]{
-    --bg1:#f4ecd9; --bg2:#eadfc6;
-    --text:#3b3226; --dim:#8a7c62; --accent:#9a6b2f; --accent2:#7a5b1e;
-    --glass: rgba(250,244,229,.8);
-    --glass-border: rgba(90,70,40,.18);
-    --hdr: rgba(244,236,217,.85);
-    --panel: rgba(90,70,40,.07);
-    --panel-border: rgba(90,70,40,.18);
+  body[data-theme="ember"]{
+    --bg1:#150d12; --bg2:#20121a;
+    --glow1:rgba(249,115,22,.18); --glow2:rgba(236,72,153,.15);
+    --text:#f8eef1; --dim:#a8909a; --accent:#fb7f6a; --accent2:#fbbf24;
+    --grad:linear-gradient(135deg,#f97316,#ec4899);
+    --glass:rgba(34,20,28,.87);
+    --glass-border:rgba(255,190,175,.16);
+    --hdr:rgba(28,17,24,.9);
+    --panel:rgba(255,190,175,.08);
+    --panel-border:rgba(255,190,175,.17);
     --btn-text:#fff;
-    --hl: rgba(154,107,47,.16);
-    --whl: rgba(200,150,50,.3);
-    --ok:#3f6212; --bad:#9f1239;
+    --hl:rgba(249,115,22,.17);
+    --whl:rgba(236,72,153,.27);
+    --ok:#4ade80; --bad:#fb7185;
+    --shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 16px 44px rgba(15,4,10,.6);
   }
-  body[data-theme="sakura"]{
-    --bg1:#fdf3f5; --bg2:#fbe4ea;
-    --text:#33222a; --dim:#94707e; --accent:#d4577a; --accent2:#9d5a1c;
-    --glass: rgba(255,250,252,.8);
-    --glass-border: rgba(180,80,110,.15);
-    --hdr: rgba(253,243,245,.85);
-    --panel: rgba(180,80,110,.06);
-    --panel-border: rgba(180,80,110,.16);
+  body[data-theme="aurora"]{
+    --bg1:#071316; --bg2:#0b1e26;
+    --glow1:rgba(45,212,191,.17); --glow2:rgba(59,130,246,.15);
+    --text:#e9f6f5; --dim:#7fa3a6; --accent:#4fd1c5; --accent2:#fcd34d;
+    --grad:linear-gradient(135deg,#14b8a6,#3b82f6);
+    --glass:rgba(12,30,36,.87);
+    --glass-border:rgba(140,220,212,.15);
+    --hdr:rgba(10,26,31,.9);
+    --panel:rgba(140,220,212,.07);
+    --panel-border:rgba(140,220,212,.16);
     --btn-text:#fff;
-    --hl: rgba(212,87,122,.14);
-    --whl: rgba(255,180,60,.3);
-    --ok:#15803d; --bad:#b91c1c;
+    --hl:rgba(20,184,166,.17);
+    --whl:rgba(59,130,246,.26);
+    --ok:#34d399; --bad:#f87171;
+    --shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 16px 44px rgba(2,10,12,.6);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
+  /* extremely blurred video thumbnail as ambient background (toggle: 背景) */
+  #bgArt{
+    display:none; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background-size:cover; background-position:center;
+    filter:blur(70px) saturate(1.3) brightness(var(--bgbright, .55)); /* slider = brightness */
+    transform:scale(1.25);
+  }
+  #bgArt::after{
+    content:''; position:absolute; inset:0;
+    background:var(--bg1); opacity:.3; /* light constant tint for readability */
+  }
+  #bgDim{accent-color:var(--accent); width:70px; cursor:pointer;}
+  body.bgart #bgArt{display:block;}
+  /* when the video background is showing, hide the theme glows so ONLY
+     the video's colors fill the screen */
+  body.bgart.videobg{background:var(--bg1);}
   html,body{height:100%;}
   body{
     font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Yu Gothic',-apple-system,'Noto Sans JP',sans-serif;
-    background:radial-gradient(1200px 800px at 70% -10%, var(--bg2) 0%, var(--bg1) 55%), var(--bg1);
+    background:
+      radial-gradient(1000px 700px at 88% -12%, var(--glow1), transparent 60%),
+      radial-gradient(900px 700px at -12% 108%, var(--glow2), transparent 60%),
+      linear-gradient(180deg, var(--bg2), var(--bg1) 60%);
+    background-attachment:fixed;
     color:var(--text);
     -webkit-font-smoothing:antialiased;
     transition:background .3s, color .3s;
   }
-  header{
-    position:sticky; top:12px; z-index:50;
-    display:flex; gap:9px; align-items:center; flex-wrap:wrap;
-    margin:12px 16px 0;
-    padding:11px 18px;
-    background:var(--hdr);
-    backdrop-filter:blur(26px) saturate(170%);
-    -webkit-backdrop-filter:blur(26px) saturate(170%);
-    border:1px solid var(--panel-border);
-    border-radius:18px;
-    box-shadow:0 10px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
-    transition:transform .28s ease, opacity .28s ease;
+  /* nav lives in a bubble at the bottom-left; hovering it opens the full panel */
+  #navBubble{
+    position:fixed; left:16px; bottom:16px; z-index:112;
+    width:46px; height:46px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    color:var(--accent); font-weight:700; font-size:17px; user-select:none;
+    opacity:.35; transition:opacity .25s, transform .2s;
+    box-shadow:var(--shadow);
   }
-  header.hide{transform:translateY(calc(-100% - 16px)); opacity:0;}
-  #topZone{position:fixed; top:0; left:0; right:0; height:18px; z-index:55;}
+  #navBubble:hover{opacity:1; transform:scale(1.08);}
+  body.navopen #navBubble{opacity:1;}
+  header{
+    position:fixed; left:16px; bottom:72px; z-index:110;
+    display:flex; gap:6px; align-items:center; flex-wrap:wrap;
+    width:min(720px, calc(100vw - 32px));
+    padding:12px 14px;
+    background:var(--hdr);
+    border:1px solid var(--panel-border);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    opacity:0; pointer-events:none;
+    transform:translateY(10px) scale(.97); transform-origin:bottom left;
+    transition:opacity .22s ease, transform .22s ease;
+  }
+  body.navopen header{opacity:1; pointer-events:auto; transform:none;}
+  /* quiet, modern header controls — chrome only appears on hover */
+  header button{padding:7px 13px; font-size:12.5px; border-radius:9px;}
+  header button.ghost, header select{
+    background:transparent; border:1px solid transparent; color:var(--dim);
+  }
+  header button.ghost:hover, header select:hover{
+    background:var(--panel); border-color:var(--panel-border); color:var(--text); filter:none;
+  }
+  header .ctl{gap:5px; font-size:12px;}
+  header .tabs{padding:2px; border-radius:10px;}
+  header .tabs button{padding:6px 13px; border-radius:8px; font-size:12.5px;}
+  header #url{background:transparent; border:1px solid var(--panel-border); border-radius:9px; padding:8px 12px;}
+  header #url:focus{background:var(--panel); border-color:var(--accent);}
   .logo{font-weight:700; letter-spacing:.4px; font-size:15px; white-space:nowrap;}
   .logo span{color:var(--accent);}
   #url{
@@ -124,7 +133,8 @@
   }
   #url:focus{border-color:var(--accent);}
   button{
-    background:var(--accent); border:none; color:var(--btn-text); font-weight:600;
+    background:var(--grad); border:none; color:#fff; font-weight:600;
+    box-shadow:0 4px 16px rgba(0,0,0,.35);
     padding:9px 16px; border-radius:10px; cursor:pointer; font-size:13.5px;
     transition:filter .15s;
   }
@@ -142,9 +152,9 @@
 
   .tabs{display:flex; gap:4px; background:var(--panel); border-radius:11px; padding:3px;}
   .tabs button{background:transparent; color:var(--dim); font-weight:600; padding:7px 16px; border-radius:9px; font-size:13px;}
-  .tabs button.on{background:var(--accent); color:var(--btn-text);}
+  .tabs button.on{background:var(--grad); color:#fff;}
 
-  main{max-width:800px; margin:0 auto; padding:30px 28px 220px;}
+  main{max-width:1060px; margin:0 auto; padding:34px clamp(28px, 5vw, 70px) 220px;}
   #status{color:var(--dim); font-size:14px; line-height:1.7; padding:30px 6px; text-align:center; white-space:pre-line;}
   #status .hint{font-size:12.5px; opacity:.75;}
   #log{
@@ -164,18 +174,202 @@
     font-size:var(--fs); line-height:2.15; text-align:justify;
   }
   #book p{margin:0 0 1.1em; text-indent:1em;}
-  .sent{cursor:pointer; border-radius:4px; transition:background .25s, opacity .4s;
-    -webkit-box-decoration-break:clone; box-decoration-break:clone;}
-  .sent:hover{background:var(--panel);}
-  .sent.active{background:var(--hl);}
+  /* position is shown by brightness, not background bands */
+  .sent{cursor:pointer; opacity:.62; transition:opacity .35s;}
+  .sent:hover{opacity:.88;}
+  .sent.active{opacity:1;}
   /* focus mode: dim everything except the sentence being spoken */
   body.focus .sent{opacity:.22;}
   body.focus .sent:hover{opacity:.75;}
   body.focus .sent.active{opacity:1;}
   .w{cursor:pointer; border-radius:4px; transition:background .12s;}
   .w:hover{background:var(--whl);}
+  /* while a sentence is highlighted, only ITS words respond to hover */
+  body.hasactive #book .sent:not(.active) .w{cursor:default;}
+  body.hasactive #book .sent:not(.active) .w:hover{background:transparent;}
   /* space-bar highlight of the word currently being spoken */
-  .w.wcur{background:var(--whl); box-shadow:0 2px 0 var(--accent);}
+  .w.wcur{
+    background:var(--whl); box-shadow:0 3px 0 var(--accent);
+    animation:wpulse .55s ease 3;
+  }
+  @keyframes wpulse{
+    50%{box-shadow:0 3px 0 var(--accent), 0 0 0 7px var(--hl); background:var(--hl);}
+  }
+
+  /* ---------- half-screen word panel (hover mode) ---------- */
+  #sidePanel{
+    position:fixed; right:22px; top:50%; transform:translateY(-50%);
+    width:min(540px, 42vw); max-height:82vh;
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    gap:15px; text-align:center; padding:34px 30px; overflow-y:auto; z-index:95;
+    background:var(--glass);
+    border:1px solid var(--glass-border); border-radius:24px;
+    box-shadow:var(--shadow);
+  }
+  body.panelmode #sidePanel{display:flex;}
+  .sp-word{font-family:var(--jfont); font-size:clamp(50px, 6vw, 100px); font-weight:700; line-height:1.15; color:var(--text);}
+  .sp-reading{font-size:26px; color:var(--accent2); min-height:32px;}
+  #spSenses{font-size:17.5px; line-height:1.7; max-width:460px; text-align:left; margin-top:0;}
+  #spImg{width:150px; height:150px; object-fit:cover; border-radius:16px; display:none;
+    border:1px solid var(--glass-border); box-shadow:var(--shadow);}
+  .sp-hint{font-size:12px; color:var(--dim);}
+
+  /* kanji-only focus: everything that isn't a kanji word almost disappears */
+  body.kanjionly #book .tx, body.kanjionly #book .w:not(.kj){opacity:.28;}
+  body.kanjionly #book .tx:hover, body.kanjionly #book .w:not(.kj):hover{opacity:.6;}
+  body.kanjionly #book .w.kj{opacity:1;}
+  /* no background bands in kanji mode — the highlight moves to the kanji itself */
+  body.kanjionly #book .sent, body.kanjionly #book .sent.active,
+  body.kanjionly #book .sent:hover{background:transparent; box-shadow:none;}
+
+  /* ---------- IMI mode: full-screen kanji + meanings of the current paragraph ---------- */
+  #imiView{display:none;}
+  body.klist #book, body.klist #suggest{display:none;}
+  body.klist #imiView{display:block;}
+  .imi-title{font-size:10.5px; letter-spacing:1.6px; color:var(--dim); font-weight:600;
+    text-align:center; margin:8px 0 34px;}
+  #imiGrid{
+    display:grid; grid-template-columns:max-content 1fr;
+    column-gap:clamp(28px, 5vw, 64px); row-gap:30px; align-items:start;
+    max-width:880px; margin:0 auto;
+  }
+  .imi-w{font-size:clamp(30px, 4vw, 46px); font-weight:700; font-family:var(--jfont);
+    white-space:nowrap; line-height:1.2; color:var(--text);}
+  .imi-w small{display:block; font-size:14px; font-weight:500; color:var(--accent2);
+    margin-top:4px; font-family:'Hiragino Sans',sans-serif;}
+  .imi-m{font-size:16.5px; color:var(--text); line-height:1.7; padding-top:12px; opacity:.92;}
+  .imi-m b{color:var(--accent); font-weight:700; font-size:11px; letter-spacing:1px; margin-right:8px;}
+  .imi-empty{color:var(--dim); text-align:center; padding:70px 0; line-height:1.9; font-size:14px;}
+  /* the kanji currently being spoken, inside IMI mode */
+  .imi-w, .imi-m{transition:opacity .3s, color .3s;}
+  .imi-w.now{color:var(--accent);}
+  .imi-w.now small{color:var(--accent2);}
+  .imi-m.now{opacity:1; color:var(--text);}
+  #imiGrid.hasnow .imi-w:not(.now), #imiGrid.hasnow .imi-m:not(.now){opacity:.4;}
+
+  /* ---------- KANJI LENS (press L): full-screen zoomed detail of the nearest kanji ---------- */
+  #lensView{
+    display:none; position:fixed; inset:0; z-index:96;
+    grid-template-columns:1fr 1fr;
+    background:radial-gradient(900px 600px at 30% 40%, var(--bg2) 0%, var(--bg1) 70%), var(--bg1);
+  }
+  body.lens #lensView{display:grid;}
+  /* left half: the word, as big as the screen allows */
+  #lensLeft{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:16px; padding:5vh 2vw; border-right:1px solid var(--panel-border);
+    text-align:center; overflow:hidden;
+  }
+  #lensWord{font-family:var(--jfont); font-weight:700; line-height:1.02; color:var(--text);
+    white-space:nowrap; max-width:47vw;}
+  #lensReading{font-size:clamp(20px, 2.4vw, 34px); color:var(--accent2);}
+  /* right half: everything known about it */
+  #lensRight{
+    display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+    gap:15px; padding:7vh 4vw 9vh; overflow-y:auto; text-align:left;
+  }
+  #lensBadges{display:flex; gap:8px; flex-wrap:wrap;}
+  #lensFreq{font-size:12.5px; color:var(--dim);}
+  #lensImg{width:clamp(110px, 12vw, 170px); height:clamp(110px, 12vw, 170px);
+    object-fit:cover; border-radius:18px; display:none;
+    border:1px solid var(--glass-border); box-shadow:var(--shadow);}
+  #lensSenses{max-width:600px; text-align:left; font-size:clamp(15px, 1.6vw, 19px);
+    line-height:1.75; color:var(--text);}
+  #lensSenses .sense{margin-bottom:10px; display:flex; gap:10px;}
+  #lensSenses .n{color:var(--dim); font-size:12px; flex-shrink:0; transform:translateY(3px);}
+  #lensSenses .sp{display:block; color:var(--dim); font-size:11.5px; margin-top:2px;}
+  #lensHint{position:fixed; bottom:20px; left:0; right:0; text-align:center;
+    font-size:11px; color:var(--dim);}
+  /* per-kanji breakdown cards inside the lens */
+  #lensKanji{
+    display:grid; grid-template-columns:1fr;
+    gap:12px; width:100%; max-width:600px; margin-top:4px;
+  }
+  .lk-card{
+    display:flex; gap:15px; align-items:flex-start; text-align:left;
+    background:var(--panel); border:1px solid var(--panel-border);
+    border-radius:14px; padding:15px 17px;
+  }
+  .lk-char{font-family:var(--jfont); font-size:56px; font-weight:700; line-height:1;}
+  .lk-info{flex:1; min-width:0; font-size:12.5px; line-height:1.55; color:var(--text);}
+  .lk-meta{color:var(--dim); font-size:10.5px; letter-spacing:.5px; margin-bottom:3px;}
+  .lk-mean{margin-bottom:4px;}
+  .lk-read{color:var(--dim);}
+  .lk-read b{color:var(--accent); font-weight:600; margin-right:5px; font-size:11px;}
+  .lk-rad{margin-top:7px; display:flex; gap:6px; flex-wrap:wrap;}
+  .lk-rad span{
+    font-family:var(--jfont); font-size:17px;
+    background:var(--hl); border:1px solid var(--accent);
+    border-radius:8px; padding:2px 8px;
+  }
+
+  /* ---------- SUPER FOCUS: only the kanji playing right now, full screen ---------- */
+  #soloView{
+    display:none; position:fixed; inset:0; z-index:92;
+    flex-direction:column; align-items:center; justify-content:center;
+    gap:20px; text-align:center; padding:8vh 6vw;
+    background:radial-gradient(900px 600px at 50% 30%, var(--bg2) 0%, var(--bg1) 70%), var(--bg1);
+  }
+  body.solo #soloView{display:flex;}
+  #soloWord{font-family:var(--jfont); font-weight:700; line-height:1.05;
+    color:var(--text); transition:opacity .25s;
+    white-space:nowrap; max-width:94vw; overflow:hidden;}
+  #soloReading{font-size:clamp(20px, 3vw, 38px); color:var(--accent2);}
+  #soloMeaning{font-size:clamp(15px, 2vw, 24px); color:var(--dim); line-height:1.6; max-width:760px;}
+  #soloHint{position:fixed; bottom:22px; left:0; right:0; text-align:center; font-size:11px; color:var(--dim);}
+
+  /* ---------- thin bottom mini-player ---------- */
+  #miniPlayer{
+    position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
+    z-index:70; display:none; align-items:center; gap:12px;
+    height:40px; padding:0 16px; width:min(540px, 86vw);
+    background:var(--glass);
+    border:1px solid var(--glass-border); border-radius:20px;
+    box-shadow:var(--shadow);
+    opacity:.3; transition:opacity .3s ease;
+  }
+  #miniPlayer:hover{opacity:1;}
+  #miniPlayer button{
+    background:transparent; border:none; color:var(--text); cursor:pointer;
+    padding:5px 7px; border-radius:8px; display:flex; align-items:center;
+  }
+  #miniPlayer button:hover{background:var(--panel); filter:none;}
+  #miniPlayer svg{display:block;}
+  .mp-time{font-size:10.5px; color:var(--dim); font-family:ui-monospace,'SF Mono',Menlo,monospace; min-width:34px; text-align:center;}
+  #mpTrack{flex:1; height:4px; background:var(--panel-border); border-radius:2px; cursor:pointer; position:relative;}
+  #mpFill{height:100%; width:0; background:var(--accent); border-radius:2px; pointer-events:none;}
+
+  /* ---------- suggested videos (YouTube-style thumbnail grid) ---------- */
+  #suggest{margin-top:50px; display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));
+    gap:14px; font-family:'Hiragino Sans',sans-serif;}
+  #suggest .sg-title{grid-column:1 / -1; font-size:11px; letter-spacing:1.2px; color:var(--dim); font-weight:600;}
+  .sgCard{
+    cursor:pointer; border-radius:12px; overflow:hidden;
+    background:var(--panel); border:1px solid var(--panel-border);
+    transition:transform .15s, border-color .15s;
+  }
+  .sgCard:hover{transform:translateY(-3px); border-color:var(--accent);}
+  .sgCard img{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:#000;}
+  .sgCard .t{font-size:12px; padding:8px 10px 11px; line-height:1.45; color:var(--text);
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+
+  /* ---------- library ---------- */
+  #libList{display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:14px;
+    font-family:'Hiragino Sans',sans-serif;}
+  .libDate{font-size:10.5px; color:var(--dim); padding:0 10px 9px;}
+  .bookCard{
+    cursor:pointer; border-radius:12px; padding:16px 18px;
+    background:var(--panel); border:1px solid var(--panel-border);
+    transition:transform .15s, border-color .15s;
+  }
+  .bookCard:hover{transform:translateY(-3px); border-color:var(--accent);}
+  .bookCard .bt{font-family:var(--jfont); font-size:17px; font-weight:700; line-height:1.4;}
+  .bookCard .ba{font-size:11.5px; color:var(--dim); margin-top:4px;}
+  /* illustrations that live inside the book/article itself */
+  .bookimg{
+    display:block; max-width:min(480px, 88%); margin:18px auto;
+    border-radius:14px; border:1px solid var(--panel-border); box-shadow:var(--shadow);
+  }
 
   /* ---------- cards ---------- */
   #cardsView{display:none;}
@@ -186,18 +380,16 @@
     cursor:pointer; transition:all .15s;
   }
   .chip:hover{border-color:var(--accent);}
-  .chip.on{background:var(--accent); color:var(--btn-text); border-color:var(--accent);}
+  .chip.on{background:var(--grad); color:#fff; border-color:transparent;}
   .chip small{opacity:.75; font-weight:500; margin-left:4px;}
   #enrichNote{text-align:center; font-size:11.5px; color:var(--dim); margin-bottom:16px; min-height:16px;}
   #cardStage{display:flex; flex-direction:column; align-items:center; gap:20px;}
   #card{
     width:min(calc(480px * var(--cz)), 94vw); min-height:calc(300px * var(--cz));
     background:var(--glass);
-    backdrop-filter:blur(34px) saturate(180%);
-    -webkit-backdrop-filter:blur(34px) saturate(180%);
     border:1px solid var(--glass-border);
     border-radius:22px;
-    box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09);
+    box-shadow:var(--shadow);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     gap:calc(14px * var(--cz)); padding:36px 30px; cursor:pointer; text-align:center;
     transition:transform .12s; user-select:none;
@@ -209,7 +401,7 @@
   .c-img{
     width:calc(110px * var(--cz)); height:calc(110px * var(--cz));
     border-radius:14px; object-fit:cover;
-    border:1px solid var(--glass-border); box-shadow:0 6px 18px rgba(0,0,0,.3);
+    border:1px solid var(--glass-border); box-shadow:var(--shadow);
   }
   .c-reading{font-size:calc(20px * var(--cz)); color:var(--accent2);}
   .c-meaning{font-size:calc(17px * var(--cz)); line-height:1.6; color:var(--text); max-width:calc(420px * var(--cz));}
@@ -233,11 +425,9 @@
   #popup{
     position:fixed; z-index:100; width:340px; max-width:calc(100vw - 24px);
     background:var(--glass);
-    backdrop-filter:blur(34px) saturate(180%);
-    -webkit-backdrop-filter:blur(34px) saturate(180%);
     border:1px solid var(--glass-border);
     border-radius:16px;
-    box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09);
+    box-shadow:var(--shadow);
     padding:16px 18px;
     opacity:0; pointer-events:none; transform:translateY(6px) scale(.98);
     transition:opacity .16s ease, transform .16s ease;
@@ -255,7 +445,7 @@
   }
   .p-img{
     width:88px; height:88px; flex-shrink:0; border-radius:12px; object-fit:cover;
-    border:1px solid var(--glass-border); box-shadow:0 4px 14px rgba(0,0,0,.25);
+    border:1px solid var(--glass-border); box-shadow:var(--shadow);
     display:none;
   }
   .p-senses{margin-top:12px; font-size:13.5px; line-height:1.55; color:var(--text);}
@@ -269,7 +459,7 @@
     position:fixed; right:18px; bottom:18px; z-index:60;
     width:336px; border-radius:14px; overflow:hidden;
     border:1px solid var(--panel-border);
-    box-shadow:0 16px 44px rgba(0,0,0,.45);
+    box-shadow:var(--shadow);
     background:#000; display:none;
   }
   #playerWrap.mini #player{display:none;}
@@ -281,6 +471,21 @@
   #pbar b{font-size:11px; color:#8b93a7; font-weight:500; margin-right:auto; padding-left:4px;}
   #pbar button{padding:3px 9px; font-size:11px; border-radius:7px;}
   #player{width:336px; height:189px; border:0; display:block;}
+  /* ---------- caption strip: a horizontal slice showing ONLY the video's own
+     caption area, centered at the bottom, clear of the reading text ---------- */
+  body.capstrip #playerWrap{
+    right:auto; left:50%; transform:translateX(-50%); bottom:66px;
+    width:860px; max-width:94vw; height:112px; overflow:hidden;
+  }
+  body.capstrip #pbar{display:none;}
+  body.capstrip #player{
+    width:860px !important; height:484px !important;
+    margin-top:-372px; display:block !important;
+  }
+  @media (max-width: 920px){
+    body.capstrip #playerWrap{width:640px; height:92px;}
+    body.capstrip #player{width:640px !important; height:360px !important; margin-top:-268px;}
+  }
 
   #fallback{display:none; margin-top:18px;}
   #fallback textarea{
@@ -292,7 +497,7 @@
   #fallback button{margin-top:10px;}
 </style>
 </head>
-<body data-theme="dark">
+<body data-theme="nebula">
 
 <header>
   <div class="logo">日本語<span>Flow</span></div>
@@ -300,11 +505,25 @@
     <button id="tabRead" class="on">読む Read</button>
     <button id="tabCards">単語 Cards</button>
     <button id="tabStories">物語 Stories</button>
+    <button id="tabLibrary">本 Library</button>
   </div>
   <input id="url" placeholder="YouTube URL — video needs Japanese subtitles" spellcheck="false">
   <button id="loadBtn">読み込む Load</button>
   <label class="ctl"><input type="checkbox" id="autoscroll" checked> follow</label>
   <label class="ctl" title="dim everything except the current sentence"><input type="checkbox" id="focusChk"> focus</label>
+  <label class="ctl" title="enable/disable word lookup on hover"><input type="checkbox" id="hoverChk" checked> hover</label>
+  <label class="ctl" title="pause video while hovering a word, replay the sentence after"><input type="checkbox" id="pauseChk" checked> 一時停止</label>
+  <label class="ctl" title="speak the word aloud when the detail view opens"><input type="checkbox" id="audioChk" checked> 音声</label>
+  <label class="ctl" title="fade everything except kanji words"><input type="checkbox" id="kanjiChk"> 漢字</label>
+  <label class="ctl" title="IMI mode: full-screen kanji + meanings of the current paragraph"><input type="checkbox" id="kanjiListChk"> 意味</label>
+  <label class="ctl" title="super focus: only the kanji playing right now, full screen"><input type="checkbox" id="soloChk"> 集中</label>
+  <label class="ctl" title="blurred video thumbnail as ambient background"><input type="checkbox" id="bgChk"> 背景</label>
+  <input type="range" id="bgDim" min="5" max="70" value="20" title="background visibility">
+  <select id="hoverStyleSel" title="how hovered words are shown">
+    <option value="popup">hover: popup</option>
+    <option value="panel">hover: big box</option>
+    <option value="full">hover: full screen</option>
+  </select>
   <span class="ctl">
     <button class="ghost fsbtn" id="fsMinus">A−</button>
     <button class="ghost fsbtn" id="fsPlus">A＋</button>
@@ -315,14 +534,13 @@
     <button class="ghost fsbtn" id="syncPlus">+½s</button>
   </span>
   <select id="themeSel" title="theme">
-    <option value="dark">🌙 Dark</option>
-    <option value="midnight">⬛ Midnight</option>
-    <option value="nord">🧊 Nord</option>
-    <option value="matcha">🍵 Matcha</option>
-    <option value="plum">🍇 Plum</option>
-    <option value="light">☀️ Light</option>
-    <option value="sepia">📖 Sepia</option>
-    <option value="sakura">🌸 Sakura</option>
+    <option value="nebula">🌌 Nebula</option>
+    <option value="ember">🔥 Ember</option>
+    <option value="aurora">🌊 Aurora</option>
+  </select>
+  <select id="subSrcSel" title="where subtitles come from">
+    <option value="yt">subs: YouTube</option>
+    <option value="whisper">subs: Whisper AI</option>
   </select>
   <select id="fontSel" title="Japanese font">
     <option value="mincho">明朝 Mincho</option>
@@ -343,6 +561,8 @@
 
   <div id="readView">
     <div id="book"></div>
+    <div id="imiView"></div>
+    <div id="suggest"></div>
     <div id="fallback">
       <p>Couldn't auto-fetch subtitles? Paste them manually (SRT, YouTube transcript panel text, or plain Japanese lines) and press Parse. On YouTube: ⋯ → 文字起こしを表示 / Show transcript → copy.</p>
       <textarea id="manualText" placeholder="00:00:01,000 --> 00:00:04,000&#10;こんにちは、今日は東京の天気について話します。"></textarea>
@@ -397,8 +617,64 @@
       <button id="loadStoryBtn" style="margin-top:10px;">物語を読む Load story</button>
     </div>
   </div>
+
+  <div id="libraryView" style="display:none">
+    <p style="text-align:center; color:var(--dim); font-size:13.5px; line-height:1.7; margin-bottom:16px;">
+      Real reading material — easy news with photos, and classic Japanese books.
+      Everything opens in the reader with full word lookup and flashcards.
+    </p>
+    <div class="chips" id="libCats"></div>
+    <div id="libStatus" style="text-align:center; font-size:12px; color:var(--dim); min-height:18px; margin:10px 0;"></div>
+    <div id="libList"></div>
+  </div>
 </main>
-<div id="topZone"></div>
+<div id="bgArt"></div>
+<div id="navBubble" title="menu">日</div>
+<div id="miniPlayer">
+  <button id="mpBack" title="back 5s (←)">
+    <svg width="14" height="14" viewBox="0 0 16 16"><rect x="2.6" y="2.5" width="1.5" height="11" rx=".75" fill="currentColor"/><path d="M13.4 2.9v10.2a.5.5 0 0 1-.8.4L6 8.4a.5.5 0 0 1 0-.8l6.6-5.1a.5.5 0 0 1 .8.4z" fill="currentColor"/></svg>
+  </button>
+  <button id="mpPlay" title="play/pause"></button>
+  <button id="mpFwd" title="forward 5s (→)">
+    <svg width="14" height="14" viewBox="0 0 16 16"><rect x="11.9" y="2.5" width="1.5" height="11" rx=".75" fill="currentColor"/><path d="M2.6 2.9v10.2a.5.5 0 0 0 .8.4L10 8.4a.5.5 0 0 0 0-.8L3.4 2.5a.5.5 0 0 0-.8.4z" fill="currentColor"/></svg>
+  </button>
+  <span class="mp-time" id="mpCur">0:00</span>
+  <div id="mpTrack"><div id="mpFill"></div></div>
+  <span class="mp-time" id="mpDur">0:00</span>
+</div>
+<div id="lensView">
+  <button id="lensExit" title="close (L / Esc)" style="position:fixed; top:16px; right:16px; z-index:97;
+    background:var(--panel); border:1px solid var(--panel-border); color:var(--text);
+    width:34px; height:34px; border-radius:17px; font-size:15px; padding:0;">✕</button>
+  <div id="lensLeft">
+    <div id="lensWord">漢</div>
+    <div id="lensReading"></div>
+    <div id="lensFreq"></div>
+  </div>
+  <div id="lensRight">
+    <div id="lensBadges"></div>
+    <img id="lensImg" alt="">
+    <div id="lensSenses"></div>
+    <div id="lensKanji"></div>
+  </div>
+  <div id="lensHint">← → = previous / next kanji · L or Esc = close · in hover mode, moving the mouse closes it</div>
+</div>
+<div id="soloView">
+  <button id="soloExit" title="exit (Esc)" style="position:fixed; top:16px; right:16px; z-index:93;
+    background:var(--panel); border:1px solid var(--panel-border); color:var(--text);
+    width:34px; height:34px; border-radius:17px; font-size:15px; padding:0;">✕</button>
+  <div id="soloWord">漢</div>
+  <div id="soloReading"></div>
+  <div id="soloMeaning"></div>
+  <div id="soloHint">集中モード — only the kanji playing right now · Esc or ✕ to exit</div>
+</div>
+<div id="sidePanel">
+  <div id="spBadges"></div>
+  <div class="sp-word" id="spWord">単語</div>
+  <div class="sp-reading" id="spReading"></div>
+  <img id="spImg" alt="">
+  <div class="p-senses" id="spSenses"><span class="sp-hint">hover any word in the text — it appears here, always in the same place</span></div>
+</div>
 
 <div id="playerWrap">
   <div id="pbar"><b>▶ video</b><button class="ghost" id="miniBtn">—</button></div>
@@ -440,7 +716,10 @@ function dlog(msg, cls){
 
 /* ================= theme & sizes ================= */
 const themeSel = $('#themeSel');
-themeSel.value = localStorage.getItem('nf-theme') || 'dark';
+{
+  const saved = localStorage.getItem('nf-theme');
+  themeSel.value = ['nebula', 'ember', 'aurora'].includes(saved) ? saved : 'nebula';
+}
 document.body.dataset.theme = themeSel.value;
 themeSel.addEventListener('change', () => {
   document.body.dataset.theme = themeSel.value;
@@ -454,9 +733,10 @@ const FONTS = {
 };
 const fontSel = $('#fontSel');
 fontSel.value = localStorage.getItem('nf-font') || 'mincho';
-document.documentElement.style.setProperty('--jfont', FONTS[fontSel.value]);
+// set on <body>, because the theme rule also targets body and would win over <html>
+document.body.style.setProperty('--jfont', FONTS[fontSel.value]);
 fontSel.addEventListener('change', () => {
-  document.documentElement.style.setProperty('--jfont', FONTS[fontSel.value]);
+  document.body.style.setProperty('--jfont', FONTS[fontSel.value]);
   localStorage.setItem('nf-font', fontSel.value);
 });
 const focusChk = $('#focusChk');
@@ -466,101 +746,175 @@ focusChk.addEventListener('change', () => {
   document.body.classList.toggle('focus', focusChk.checked);
   localStorage.setItem('nf-focus', focusChk.checked ? '1' : '0');
 });
+const hoverStyleSel = $('#hoverStyleSel');
+{
+  const saved = localStorage.getItem('nf-hoverstyle') ||
+    (localStorage.getItem('nf-panel') === '1' ? 'panel' : 'popup');
+  hoverStyleSel.value = ['popup', 'panel', 'full'].includes(saved) ? saved : 'popup';
+}
+function applyHoverStyle(){
+  document.body.classList.toggle('panelmode', hoverStyleSel.value === 'panel');
+  localStorage.setItem('nf-hoverstyle', hoverStyleSel.value);
+  document.getElementById('popup').classList.remove('show');
+}
+applyHoverStyle();
+hoverStyleSel.addEventListener('change', applyHoverStyle);
+const panelOn = () => hoverStyleSel.value === 'panel';
+const fullOn = () => hoverStyleSel.value === 'full';
+const hoverChk = $('#hoverChk');
+hoverChk.checked = localStorage.getItem('nf-hover') !== '0';
+hoverChk.addEventListener('change', () => {
+  localStorage.setItem('nf-hover', hoverChk.checked ? '1' : '0');
+  if (!hoverChk.checked){
+    document.getElementById('popup').classList.remove('show');
+  }
+});
+const hoverOn = () => hoverChk.checked;
+const pauseChk = $('#pauseChk');
+pauseChk.checked = localStorage.getItem('nf-hoverpause') !== '0';
+pauseChk.addEventListener('change', () =>
+  localStorage.setItem('nf-hoverpause', pauseChk.checked ? '1' : '0'));
+const audioChk = $('#audioChk');
+audioChk.checked = localStorage.getItem('nf-audioon') !== '0';
+audioChk.addEventListener('change', () =>
+  localStorage.setItem('nf-audioon', audioChk.checked ? '1' : '0'));
+const subSrcSel = $('#subSrcSel');
+subSrcSel.value = localStorage.getItem('nf-subsrc') === 'whisper' ? 'whisper' : 'yt';
+subSrcSel.addEventListener('change', () =>
+  localStorage.setItem('nf-subsrc', subSrcSel.value));
+const kanjiChk = $('#kanjiChk');
+kanjiChk.checked = localStorage.getItem('nf-kanji') === '1';
+document.body.classList.toggle('kanjionly', kanjiChk.checked);
+kanjiChk.addEventListener('change', () => {
+  document.body.classList.toggle('kanjionly', kanjiChk.checked);
+  localStorage.setItem('nf-kanji', kanjiChk.checked ? '1' : '0');
+});
+const kanjiListChk = $('#kanjiListChk');
+kanjiListChk.checked = localStorage.getItem('nf-klist') === '1';
+document.body.classList.toggle('klist', kanjiListChk.checked);
+kanjiListChk.addEventListener('change', () => {
+  document.body.classList.toggle('klist', kanjiListChk.checked);
+  localStorage.setItem('nf-klist', kanjiListChk.checked ? '1' : '0');
+  klLastPara = null;
+  if (kanjiListChk.checked) updateKanjiList();
+});
+const soloChk = $('#soloChk');
+soloChk.checked = localStorage.getItem('nf-solo') === '1';
+document.body.classList.toggle('solo', soloChk.checked);
+soloChk.addEventListener('change', () => {
+  document.body.classList.toggle('solo', soloChk.checked);
+  localStorage.setItem('nf-solo', soloChk.checked ? '1' : '0');
+  soloLast = null;
+  if (soloChk.checked) tickLiveKanji();
+});
+const bgChk = $('#bgChk');
+bgChk.checked = localStorage.getItem('nf-bg') === '1';
+document.body.classList.toggle('bgart', bgChk.checked);
+bgChk.addEventListener('change', () => {
+  document.body.classList.toggle('bgart', bgChk.checked);
+  localStorage.setItem('nf-bg', bgChk.checked ? '1' : '0');
+});
+function setBgArt(vid){
+  $('#bgArt').style.backgroundImage = vid ? `url(https://i.ytimg.com/vi/${vid}/hqdefault.jpg)` : '';
+  document.body.classList.toggle('videobg', !!vid);
+}
+/* slider = background brightness (turn it down for darker) */
+const bgDim = $('#bgDim');
+bgDim.min = 10; bgDim.max = 100;
+bgDim.value = localStorage.getItem('nf-bgbright') || 55;
+function applyBgBright(){
+  document.body.style.setProperty('--bgbright', String(bgDim.value / 100));
+  localStorage.setItem('nf-bgbright', bgDim.value);
+}
+applyBgBright();
+bgDim.addEventListener('input', applyBgBright);
+function exitSolo(){
+  soloChk.checked = false;
+  soloChk.dispatchEvent(new Event('change'));
+}
+$('#soloExit').addEventListener('click', exitSolo);
+
+/* IMI mode — full-screen view: only the kanji of the current paragraph,
+   aligned in one straight column, meanings on the right. Updates live. */
+let klToken = 0, klLastPara = null;
+async function updateKanjiList(){
+  if (!document.body.classList.contains('klist')) return;
+  const box = $('#imiView');
+  const token = ++klToken;
+  const title = '<div class="imi-title">意味 IMI MODE ・ KANJI IN CURRENT PARAGRAPH</div>';
+  if (activeIdx < 0){
+    klLastPara = null;
+    box.innerHTML = title + '<div class="imi-empty">再生すると、今の段落の漢字と意味がここに大きく表示されます。<br>Play the video — the kanji of the current paragraph fill this screen as it\'s spoken.</div>';
+    return;
+  }
+  const sentEl = book.querySelector(`.sent[data-i="${activeIdx}"]`);
+  if (!sentEl) return;
+  const para = sentEl.closest('p') || sentEl.parentElement;
+  if (para === klLastPara) return;   // same paragraph — keep the screen steady
+  klLastPara = para;
+  imiSeen = 0;
+  window.scrollTo({top: 0, behavior: 'smooth'}); // new paragraph starts from the top
+  const seen = new Map();
+  para.querySelectorAll('.w.kj').forEach(w => {
+    if (!seen.has(w.dataset.base))
+      seen.set(w.dataset.base, {word: w.textContent, base: w.dataset.base, reading: w.dataset.reading});
+  });
+  if (!seen.size){
+    box.innerHTML = title + '<div class="imi-empty">この段落には漢字がありません — no kanji in this paragraph.</div>';
+    return;
+  }
+  const items = [...seen.values()];
+  box.innerHTML = title + '<div id="imiGrid">' + items.map(it =>
+    `<div class="imi-w">${it.word}<small>${it.reading || ''}</small></div><div class="imi-m">…</div>`).join('') + '</div>';
+  const glossCells = box.querySelectorAll('.imi-m');
+  const readCells = box.querySelectorAll('.imi-w small');
+  await Promise.all(items.map(async (it, i) => {
+    const entry = await lookup(it.base);
+    if (token !== klToken) return;
+    const jl = jlptLookup(it.base, it.word, it.reading);
+    const gloss = (entry && entry.senses.length) ? entry.senses[0].gloss : (jl && jl.meaning ? jl.meaning : '—');
+    glossCells[i].innerHTML = (jl ? `<b>${jl.level.toUpperCase()}</b>` : '') + gloss;
+    if (entry && entry.reading && !it.reading)
+      readCells[i].textContent = kata2hira(entry.reading);
+  }));
+}
 let fs = +(localStorage.getItem('nf-fs') || 21);
 let cz = +(localStorage.getItem('nf-cz') || 1);
 const applySizes = () => {
-  document.documentElement.style.setProperty('--fs', fs + 'px');
-  document.documentElement.style.setProperty('--cz', cz);
+  document.body.style.setProperty('--fs', fs + 'px');
+  document.body.style.setProperty('--cz', cz);
   localStorage.setItem('nf-fs', fs); localStorage.setItem('nf-cz', cz);
 };
 applySizes();
-$('#fsPlus').addEventListener('click', () => { fs = Math.min(34, fs + 2); applySizes(); });
-$('#fsMinus').addEventListener('click', () => { fs = Math.max(15, fs - 2); applySizes(); });
+$('#fsPlus').addEventListener('click', () => { fs = Math.min(54, fs + 3); applySizes(); });
+$('#fsMinus').addEventListener('click', () => { fs = Math.max(15, fs - 3); applySizes(); });
 $('#czPlus').addEventListener('click', () => { cz = Math.min(1.8, +(cz + 0.15).toFixed(2)); applySizes(); });
 $('#czMinus').addEventListener('click', () => { cz = Math.max(0.7, +(cz - 0.15).toFixed(2)); applySizes(); });
 
 /* ================= fetching ================= */
 /* true whenever the page is served by the NihongoFlow server (localhost OR cloud deploy) */
 const LOCAL = location.protocol.startsWith('http');
-const PUBLIC_PROXIES = [
-  u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
-  u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-  u => 'https://test.cors.workers.dev/?' + u,
-  u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
-];
-const PROXIES = LOCAL ? [u => '/proxy?url=' + encodeURIComponent(u)] : PUBLIC_PROXIES;
 
+/* single relay through the app's own server — quiet failures (console only) */
 async function proxyFetch(url, label){
-  const what = label || new URL(url).hostname;
-  let winner = false;
-  const ctrls = [];
-  const attempts = PROXIES.map(p => (async () => {
-    const host = LOCAL ? 'local server' : new URL(p('https://x.com')).hostname;
-    const c = new AbortController(); ctrls.push(c);
-    const t = setTimeout(() => c.abort(), 20000);
-    try{
-      const r = await fetch(p(url), {signal: c.signal});
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const txt = await r.text();
-      if (!txt || txt.length < 3) throw new Error('empty response');
-      winner = true;
-      return txt;
-    }catch(e){
-      if (!winner) dlog(`${what} via ${host}: ${e.name === 'AbortError' ? 'timeout' : e.message}`, 'err');
-      throw e;
-    }finally{ clearTimeout(t); }
-  })());
+  if (!LOCAL) throw new Error('server not running');
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), 20000);
   try{
-    const txt = await Promise.any(attempts);
-    ctrls.forEach(c => { try{ c.abort(); }catch(e){} });
+    const r = await fetch('/proxy?url=' + encodeURIComponent(url), {signal: c.signal});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const txt = await r.text();
+    if (!txt || txt.length < 3) throw new Error('empty response');
     return txt;
   }catch(e){
-    throw new Error('ネットワーク取得に失敗しました — fetch failed for ' + what);
-  }
+    console.warn('[NF]', label || url, e.message);
+    throw e;
+  }finally{ clearTimeout(t); }
 }
 
 function parseId(url){
   const m = url.match(/(?:youtu\.be\/|v=|shorts\/|embed\/|live\/)([\w-]{11})/) || url.match(/^([\w-]{11})$/);
   return m ? m[1] : null;
-}
-function extractTracks(html){
-  const key = '"captionTracks":';
-  const i = html.indexOf(key);
-  if (i < 0) return null;
-  let depth = 0, end = -1;
-  for (let k = i + key.length; k < html.length; k++){
-    const ch = html[k];
-    if (ch === '[') depth++;
-    else if (ch === ']'){ depth--; if (depth === 0){ end = k + 1; break; } }
-  }
-  try{ return JSON.parse(html.slice(i + key.length, end)); }catch(e){ return null; }
-}
-function parseJson3(txt){
-  const d = JSON.parse(txt); const out = [];
-  for (const ev of (d.events || [])){
-    if (!ev.segs) continue;
-    const text = ev.segs.map(s => s.utf8 || '').join('').replace(/\n/g, ' ').trim();
-    if (text) out.push({t: ev.tStartMs || 0, text});
-  }
-  return out;
-}
-function parseXmlCaps(xml){
-  const doc = new DOMParser().parseFromString(xml, 'text/xml');
-  return [...doc.querySelectorAll('text')].map(n => ({
-    t: Math.round(parseFloat(n.getAttribute('start') || 0) * 1000),
-    text: (n.textContent || '').replace(/\n/g, ' ').trim()
-  })).filter(s => s.text);
-}
-function pickTrack(tracks){
-  return tracks.find(t => t.languageCode === 'ja' && t.kind !== 'asr')
-      || tracks.find(t => t.languageCode === 'ja')
-      || tracks[0];
-}
-async function fetchSegsBrowser(tr){
-  let segs = null;
-  try{ segs = parseJson3(await proxyFetch(tr.baseUrl + '&fmt=json3', 'subtitles')); }catch(e){}
-  if (!segs || !segs.length){ try{ segs = parseXmlCaps(await proxyFetch(tr.baseUrl, 'subtitles')); }catch(e){} }
-  return (segs && segs.length) ? segs : null;
 }
 
 /* ================= tokenizer ================= */
@@ -585,23 +939,24 @@ function loadTokenizer(){
 function sentencify(segs){
   const out = [];
   let cur = null;
+  const flush = () => {
+    if (cur){ out.push({t: cur.t, text: cur.parts.join(hasJP(cur.parts[0]) ? '' : ' ')}); cur = null; }
+  };
   for (const s of segs){
-    const txt = s.text.trim();
+    if (s.img){ flush(); out.push({t: -1, img: s.img}); continue; } // book's own illustration
+    const txt = (s.text || '').trim();
     if (!txt) continue;
     if (!cur) cur = {t: s.t, parts: []};
     cur.parts.push(txt);
     const len = cur.parts.reduce((a, p) => a + p.length, 0);
-    if (/[。！？!?」]$/.test(txt) || len > 90){
-      out.push({t: cur.t, text: cur.parts.join(hasJP(cur.parts[0]) ? '' : ' ')});
-      cur = null;
-    }
+    if (/[。！？!?」]$/.test(txt) || len > 90) flush();
   }
-  if (cur) out.push({t: cur.t, text: cur.parts.join(hasJP(cur.parts[0]) ? '' : ' ')});
+  flush();
   return out;
 }
 function tokenSpan(tk){
   const w = document.createElement('span');
-  w.className = 'w';
+  w.className = 'w' + (hasKanji(tk.surface_form) ? ' kj' : '');
   w.textContent = tk.surface_form;
   w.dataset.base = (tk.basic_form && tk.basic_form !== '*') ? tk.basic_form : tk.surface_form;
   w.dataset.reading = (tk.reading && tk.reading !== '*') ? kata2hira(tk.reading) : '';
@@ -614,10 +969,20 @@ function renderBook(){
   sentences = sentencify(segments);
   book.innerHTML = '';
   activeIdx = -1;
+  document.body.classList.remove('hasactive');
   const frag = document.createDocumentFragment();
   let para = document.createElement('p');
   let count = 0, lastT = -1;
   sentences.forEach((sen, i) => {
+    if (sen.img){
+      // an illustration from the source itself, kept in reading position
+      if (para.childNodes.length){ frag.appendChild(para); para = document.createElement('p'); count = 0; }
+      const im = document.createElement('img');
+      im.className = 'bookimg'; im.loading = 'lazy'; im.alt = ''; im.src = sen.img;
+      im.onerror = () => im.remove();
+      frag.appendChild(im);
+      return;
+    }
     if (count > 0 && ((sen.t >= 0 && lastT >= 0 && sen.t - lastT > 6000 && count >= 2) || count >= 6)){
       frag.appendChild(para);
       para = document.createElement('p');
@@ -627,7 +992,12 @@ function renderBook(){
     span.className = 'sent'; span.dataset.i = i;
     for (const tk of tokenizer.tokenize(sen.text)){
       if (hasJP(tk.surface_form)) span.appendChild(tokenSpan(tk));
-      else span.appendChild(document.createTextNode(tk.surface_form));
+      else {
+        const tx = document.createElement('span');
+        tx.className = 'tx';
+        tx.textContent = tk.surface_form;
+        span.appendChild(tx);
+      }
     }
     if (sen.t >= 0){
       span.title = fmtTime(sen.t);
@@ -638,6 +1008,7 @@ function renderBook(){
   });
   if (para.childNodes.length) frag.appendChild(para);
   book.appendChild(frag);
+  updateKanjiList();
 }
 
 /* ================= dictionary + images ================= */
@@ -713,17 +1084,119 @@ function findImage(base, gloss){
 
 /* ================= hover popup ================= */
 let hoverTimer, hideTimer, popupToken = 0;
+/* hover-pause: hovering any word pauses the video; leaving it resumes
+   playback from the start of that sentence (so you re-hear the word) */
+let hoverPaused = false, resumeTimer = null, hoverResumeAt = null;
+/* estimate a WORD's moment in the audio: its position within the sentence,
+   scaled across the sentence's duration (subtitles only carry sentence times) */
+function wordTime(w){
+  const sent = w.closest('.sent');
+  const i = sent ? +sent.dataset.i : -1;
+  const s = i >= 0 ? sentences[i] : null;
+  if (!s || s.t < 0) return null;
+  const ws = [...sent.querySelectorAll('.w')];
+  const at = Math.max(0, ws.indexOf(w));
+  let en = null;
+  for (let k = i + 1; k < sentences.length; k++){ if (sentences[k].t >= 0){ en = sentences[k].t; break; } }
+  if (en === null) en = s.t + 6000;
+  return s.t + (at / Math.max(1, ws.length)) * Math.max(600, en - s.t);
+}
+function hoverPause(w){
+  clearTimeout(resumeTimer);
+  if (player && playerReady && player.getPlayerState && player.getPlayerState() === 1){
+    player.pauseVideo();
+    hoverPaused = true;
+    hoverResumeAt = wordTime(w);
+  }
+}
+/* click a word → play from that word */
+book.addEventListener('click', e => {
+  const w = e.target.closest('.w');
+  if (!w || !player || !playerReady) return;
+  const t = wordTime(w);
+  if (t == null) return;
+  hoverPaused = false;
+  clearTimeout(resumeTimer);
+  player.seekTo(t / 1000, true);
+  player.playVideo();
+});
+function hoverResumeSoon(){
+  if (!hoverPaused) return;
+  clearTimeout(resumeTimer);
+  resumeTimer = setTimeout(() => {
+    if (!hoverPaused || !player || !playerReady) return;
+    if (lens.open) return; // stay paused while the full-screen detail is open
+    hoverPaused = false;
+    if (hoverResumeAt != null) player.seekTo(hoverResumeAt / 1000, true);
+    player.playVideo();
+  }, 350); // grace period so moving between words doesn't stutter playback
+}
+/* hover only reacts inside the highlighted sentence (when one exists —
+   story mode has no highlight, so everything stays hoverable there) */
+function hoverable(w){
+  if (!document.body.classList.contains('hasactive')) return true;
+  const s = w.closest('.sent');
+  return !!(s && s.classList.contains('active'));
+}
+/* pause/resume listeners are SEPARATE from the lookup-popup listeners,
+   so they work even when the hover-lookup checkbox is off */
 book.addEventListener('mouseover', e => {
-  const w = e.target.closest('.w'); if (!w) return;
+  const w = e.target.closest('.w');
+  if (w && pauseChk.checked && hoverable(w)) hoverPause(w);
+});
+book.addEventListener('mouseout', e => {
+  if (e.target.closest('.w') && pauseChk.checked) hoverResumeSoon();
+});
+
+book.addEventListener('mouseover', e => {
+  if (!hoverOn()) return;
+  const w = e.target.closest('.w'); if (!w || !hoverable(w)) return;
   clearTimeout(hoverTimer); clearTimeout(hideTimer);
-  hoverTimer = setTimeout(() => showPopup(w), 200);
+  hoverTimer = setTimeout(
+    () => panelOn() ? showPanel(w) : (fullOn() ? openLensFor(w) : showPopup(w)),
+    panelOn() ? 120 : (fullOn() ? 280 : 200)
+  );
 });
 book.addEventListener('mouseout', e => {
   if (!e.target.closest('.w')) return;
-  clearTimeout(hoverTimer); scheduleHide();
+  clearTimeout(hoverTimer);
+  if (!panelOn()) scheduleHide(); // panel keeps the last word — always in the same place
 });
-popup.addEventListener('mouseenter', () => clearTimeout(hideTimer));
-popup.addEventListener('mouseleave', scheduleHide);
+
+/* half-screen fixed word panel */
+let panelToken = 0;
+async function showPanel(w){
+  const token = ++panelToken;
+  const base = w.dataset.base, posJP = (w.dataset.pos || '').split(',')[0];
+  const lvl = jlptLookup(base, w.textContent, w.dataset.reading);
+  $('#spWord').textContent = w.textContent;
+  $('#spReading').textContent = w.dataset.reading || '';
+  $('#spBadges').innerHTML =
+    (POS_EN[posJP] ? `<span class="p-pos">${posJP} · ${POS_EN[posJP]}</span>` : '') +
+    (lvl ? ` <span class="p-pos" style="margin-left:4px">${lvl.level.toUpperCase()}</span>` : '');
+  $('#spSenses').innerHTML = '<span class="sp-hint">検索中… looking up…</span>';
+  const img = $('#spImg');
+  img.style.display = 'none'; img.removeAttribute('src');
+
+  const entry = await lookup(base);
+  if (token !== panelToken) return;
+  if (entry && entry.senses.length){
+    if (entry.reading && !w.dataset.reading) $('#spReading').textContent = kata2hira(entry.reading);
+    $('#spSenses').innerHTML = entry.senses.map((s, i) =>
+      `<div class="sense"><span class="n">${i + 1}</span><span>${s.gloss}${s.pos ? `<span class="sp">${s.pos}</span>` : ''}</span></div>`).join('');
+  } else if (lvl && lvl.meaning){
+    $('#spSenses').innerHTML = `<div class="sense"><span class="n">1</span><span>${lvl.meaning}</span></div>`;
+  } else {
+    $('#spSenses').innerHTML = '<span class="sp-hint">辞書に見つかりませんでした — not found</span>';
+  }
+  const gloss = entry && entry.senses[0] ? entry.senses[0].gloss : (lvl ? lvl.meaning : '');
+  const src = await findImage(base, gloss);
+  if (token !== panelToken || !src) return;
+  img.onload = () => { img.style.display = 'block'; };
+  img.src = src;
+}
+popup.addEventListener('mouseenter', () => { clearTimeout(hideTimer); clearTimeout(resumeTimer); });
+popup.addEventListener('mouseleave', () => { scheduleHide(); hoverResumeSoon(); });
 function scheduleHide(){ hideTimer = setTimeout(() => popup.classList.remove('show'), 260); }
 
 async function showPopup(w){
@@ -816,6 +1289,7 @@ setInterval(() => {
   }
   if (idx !== activeIdx){
     activeIdx = idx;
+    document.body.classList.toggle('hasactive', idx >= 0);
     book.querySelectorAll('.sent.active').forEach(n => n.classList.remove('active'));
     const n = book.querySelector(`.sent[data-i="${idx}"]`);
     if (n){
@@ -823,8 +1297,46 @@ setInterval(() => {
       if ($('#autoscroll').checked && curTab === 'read')
         n.scrollIntoView({block: 'center', behavior: 'smooth'});
     }
+    updateKanjiList();
+    imiLastNow = null;   // re-locate the "now" cell in the new sentence
   }
-}, 400);
+}, 250);
+/* ---------- thin bottom mini-player ---------- */
+const mp = $('#miniPlayer');
+const ICON_PLAY = '<svg width="15" height="15" viewBox="0 0 16 16"><path d="M4.5 2.9v10.2a.5.5 0 0 0 .77.42l8-5.1a.5.5 0 0 0 0-.84l-8-5.1a.5.5 0 0 0-.77.42z" fill="currentColor"/></svg>';
+const ICON_PAUSE = '<svg width="15" height="15" viewBox="0 0 16 16"><rect x="3.6" y="2.5" width="3" height="11" rx="1.2" fill="currentColor"/><rect x="9.4" y="2.5" width="3" height="11" rx="1.2" fill="currentColor"/></svg>';
+let mpPlaying = null;
+$('#mpPlay').innerHTML = ICON_PLAY;
+function seekRel(d){
+  if (player && playerReady && player.getCurrentTime){
+    player.seekTo(Math.max(0, player.getCurrentTime() + d), true);
+  }
+}
+$('#mpBack').addEventListener('click', () => seekRel(-5));
+$('#mpFwd').addEventListener('click', () => seekRel(5));
+$('#mpPlay').addEventListener('click', () => {
+  if (!player || !playerReady) return;
+  if (player.getPlayerState() === 1) player.pauseVideo(); else player.playVideo();
+});
+$('#mpTrack').addEventListener('click', e => {
+  if (!player || !playerReady || !player.getDuration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  player.seekTo(((e.clientX - r.left) / r.width) * player.getDuration(), true);
+});
+setInterval(() => {
+  const videoMode = player && playerReady && sentences.length && sentences[0].t >= 0;
+  if (!videoMode || !player.getDuration){ mp.style.display = 'none'; return; }
+  const dur = player.getDuration();
+  if (!dur){ mp.style.display = 'none'; return; }
+  mp.style.display = 'flex';
+  const cur = player.getCurrentTime();
+  $('#mpFill').style.width = (cur / dur * 100) + '%';
+  $('#mpCur').textContent = fmtTime(cur * 1000);
+  $('#mpDur').textContent = fmtTime(dur * 1000);
+  const playing = player.getPlayerState() === 1;
+  if (playing !== mpPlaying){ mpPlaying = playing; $('#mpPlay').innerHTML = playing ? ICON_PAUSE : ICON_PLAY; }
+}, 500);
+
 function updSync(){ $('#syncVal').textContent = (syncOff/1000).toFixed(1) + 's'; }
 $('#syncMinus').addEventListener('click', () => { syncOff -= 500; updSync(); });
 $('#syncPlus').addEventListener('click', () => { syncOff += 500; updSync(); });
@@ -863,29 +1375,10 @@ const JLPT_CSV_SOURCES = [
   lv => `https://cdn.jsdelivr.net/gh/jamsinclair/open-anki-jlpt-decks@main/src/${lv}.csv`,
   lv => `https://cdn.jsdelivr.net/gh/elzup/jlpt-word-list@master/src/${lv}.csv`,
 ];
-const JLPT_JSON_SOURCES = [
-  lv => `https://cdn.jsdelivr.net/gh/wkei/jlpt-vocab-api@main/data/${lv}.json`,
-  lv => `https://cdn.jsdelivr.net/gh/wkei/jlpt-vocab-api@master/data/${lv}.json`,
-  lv => `https://raw.githubusercontent.com/wkei/jlpt-vocab-api/main/data/${lv}.json`,
-  lv => `https://cdn.jsdelivr.net/gh/stephenmk/yomitan-jlpt-vocab@main/data/${lv}.json`,
-];
 function addEntry(e, rd, lv, meaning){
   const entry = {level: lv, reading: rd, meaning: meaning || ''};
   if (e) jlptMap.set(e, entry);
   if (rd && rd.length > 1 && !jlptMap.has(rd)) jlptMap.set(rd, entry);
-}
-/* tolerant JSON shapes: [ {...} ], {words:[...]}, {data:[...]} with word/expression/vocabulary + furigana/reading/kana + meaning/english */
-function ingestJson(data, lv){
-  const arr = Array.isArray(data) ? data : (data.words || data.data || data[lv] || []);
-  let n = 0;
-  for (const it of arr){
-    if (!it || typeof it !== 'object') continue;
-    const word = normJP(String(it.word || it.expression || it.vocabulary || it.kanji || ''));
-    const rd = kata2hira(normJP(String(it.furigana || it.reading || it.kana || it.hiragana || '')));
-    const meaning = String(it.meaning || it.english || it.definition || '');
-    if (word || rd){ addEntry(word || rd, rd, lv, meaning); n++; }
-  }
-  return n;
 }
 let jlptLoading = null;
 function loadJLPT(){
@@ -920,16 +1413,6 @@ function loadJLPT(){
           }
         }catch(e){}
       })());
-      jobs.push((async () => {
-        for (const src of JLPT_JSON_SOURCES){
-          try{
-            const r = await fetch(src(lv));
-            if (!r.ok) continue;
-            const n = ingestJson(await r.json(), lv);
-            if (n > 50){ dlog(`extra JSON source ok for ${lv}: ${n} words`, 'ok'); break; }
-          }catch(e){}
-        }
-      })());
       await Promise.all(jobs);
     }
     dlog(`JLPT lists loaded: ${jlptMap.size} entries`, 'ok');
@@ -949,6 +1432,7 @@ const BAD_DETAIL = new Set(['数', '非自立', '接尾', '代名詞', '固有�
 function buildDeck(){
   const seen = new Map();
   for (const sen of sentences){
+    if (!sen.text) continue; // skip illustrations
     for (const tk of tokenizer.tokenize(sen.text)){
       if (!GOOD_POS.has(tk.pos)) continue;
       if (BAD_DETAIL.has(tk.pos_detail_1)) continue;
@@ -1074,6 +1558,12 @@ async function renderCard(){
       <div class="c-meaning">${c.meaning ? c.meaning : '<span style="color:var(--dim)">looking up…</span>'}</div>
       <img class="c-img" style="display:none" alt="">
       <div class="c-hint">space = next card</div>`;
+    // hear the word (real recording when available, silent otherwise)
+    stopWordAudio();
+    if (LOCAL){
+      curAudio = new Audio('/audio?kanji=' + encodeURIComponent(c.word) + '&kana=' + encodeURIComponent(c.reading || ''));
+      curAudio.play().catch(() => { curAudio = null; });
+    }
     if (!c.meaning){
       const entry = await lookup(c.word);
       if (entry && entry.senses.length){
@@ -1127,7 +1617,48 @@ document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
   if (curTab === 'read' && e.code === 'Space'){
     e.preventDefault();
+    if (player && playerReady){
+      player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo();
+    }
+    return;
+  }
+  if (curTab === 'read' && e.key === 'j'){
+    e.preventDefault();
     highlightCurrentWord();
+    return;
+  }
+  if (curTab === 'read' && e.key === 'l'){
+    e.preventDefault();
+    lens.open ? closeLens() : openLens();
+    return;
+  }
+  if (lens.open){
+    if (e.key === 'ArrowLeft'){ e.preventDefault(); stepLens(-1); return; }
+    if (e.key === 'ArrowRight'){ e.preventDefault(); stepLens(1); return; }
+    if (e.key === 'Escape'){ closeLens(); return; }
+  }
+  if (curTab === 'read' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){
+    e.preventDefault();
+    seekRel(e.key === 'ArrowLeft' ? -5 : 5);
+    return;
+  }
+  if (curTab === 'read' && (e.key === 'b' || e.key === 'n')){
+    e.preventDefault();
+    startOrStepReview(e.key === 'b' ? -1 : 1);
+    return;
+  }
+  if (curTab === 'read' && e.key === 'k'){
+    e.preventDefault();
+    kanjiChk.checked = !kanjiChk.checked;
+    kanjiChk.dispatchEvent(new Event('change'));
+    return;
+  }
+  if (curTab === 'read' && e.key === 'Escape' && review.active){
+    endReview(false);
+    return;
+  }
+  if (e.key === 'Escape' && document.body.classList.contains('solo')){
+    exitSolo();
     return;
   }
   if (curTab !== 'cards') return;
@@ -1147,9 +1678,12 @@ function showTab(which){
   $('#readView').style.display = which === 'read' ? 'block' : 'none';
   $('#cardsView').style.display = which === 'cards' ? 'block' : 'none';
   $('#storiesView').style.display = which === 'stories' ? 'block' : 'none';
+  $('#libraryView').style.display = which === 'library' ? 'block' : 'none';
   $('#tabRead').classList.toggle('on', which === 'read');
   $('#tabCards').classList.toggle('on', which === 'cards');
   $('#tabStories').classList.toggle('on', which === 'stories');
+  $('#tabLibrary').classList.toggle('on', which === 'library');
+  if (which === 'library') renderLibrary();
   if (which === 'cards' && sentences.length){
     (async () => {
       await loadJLPT();
@@ -1162,19 +1696,88 @@ function showTab(which){
 $('#tabRead').addEventListener('click', () => showTab('read'));
 $('#tabCards').addEventListener('click', () => showTab('cards'));
 $('#tabStories').addEventListener('click', () => showTab('stories'));
+$('#tabLibrary').addEventListener('click', () => showTab('library'));
 
-/* ================= auto-hiding header ================= */
+/* ================= library: NHK Easy news + Aozora Bunko books ================= */
+const LIB_BOOKS = {
+  '文学 Classics': [
+    {t: '走れメロス', a: '太宰治', url: 'https://www.aozora.gr.jp/cards/000035/files/1567_14913.html'},
+    {t: '羅生門', a: '芥川龍之介', url: 'https://www.aozora.gr.jp/cards/000879/files/127_15260.html'},
+    {t: '銀河鉄道の夜', a: '宮沢賢治', url: 'https://www.aozora.gr.jp/cards/000081/files/456_15050.html'},
+    {t: '山月記', a: '中島敦', url: 'https://www.aozora.gr.jp/cards/000119/files/624_14544.html'},
+  ],
+  '童話 Fairy tales': [
+    {t: 'ごんぎつね', a: '新美南吉', url: 'https://www.aozora.gr.jp/cards/000121/files/628_14895.html'},
+    {t: '注文の多い料理店', a: '宮沢賢治', url: 'https://www.aozora.gr.jp/cards/000081/files/43754_17659.html'},
+    {t: 'セロ弾きのゴーシュ', a: '宮沢賢治', url: 'https://www.aozora.gr.jp/cards/000081/files/470_15407.html'},
+    {t: '蜘蛛の糸', a: '芥川龍之介', url: 'https://www.aozora.gr.jp/cards/000879/files/92_14545.html'},
+  ],
+};
+let libCat = 'ニュース NHK Easy';
+let libLoaded = false;
+function renderLibrary(){
+  const cats = ['ニュース NHK Easy', ...Object.keys(LIB_BOOKS)];
+  $('#libCats').innerHTML = cats.map(c =>
+    `<span class="chip ${c === libCat ? 'on' : ''}" data-c="${c}">${c}</span>`).join('');
+  $('#libCats').querySelectorAll('.chip').forEach(ch =>
+    ch.addEventListener('click', () => { libCat = ch.dataset.c; libLoaded = false; renderLibrary(); }));
+  const list = $('#libList'), st = $('#libStatus');
+  if (libCat === 'ニュース NHK Easy'){
+    if (libLoaded) return;
+    libLoaded = true;
+    list.innerHTML = '';
+    if (!LOCAL){ st.textContent = 'start the server to browse the library'; return; }
+    st.textContent = 'ニュースを取得中… fetching today\'s easy news…';
+    fetch('/reading/news').then(r => r.json()).then(j => {
+      st.textContent = '';
+      if (!j.articles || !j.articles.length){ st.textContent = j.error || 'no news found'; return; }
+      list.innerHTML = j.articles.map((a, i) =>
+        `<div class="sgCard" data-i="${i}">
+           ${a.img ? `<img loading="lazy" src="${a.img}" alt="">` : ''}
+           <div class="t">${a.title}</div>
+           <div class="libDate">${a.date}</div>
+         </div>`).join('');
+      list.querySelectorAll('.sgCard').forEach(card => card.addEventListener('click', async () => {
+        const a = j.articles[+card.dataset.i];
+        st.textContent = '記事を取得中… loading article…';
+        const art = await (await fetch('/reading/article?id=' + encodeURIComponent(a.id))).json();
+        st.textContent = '';
+        if (art.error){ st.textContent = art.error; return; }
+        const segs = [];
+        if (a.img) segs.push({t: -1, img: a.img}); // the article's own photo
+        for (const p of art.paragraphs) segs.push({t: -1, text: p});
+        enterReading(art.title || a.title, segs);
+      }));
+    }).catch(e => { st.textContent = 'news fetch failed: ' + e.message; });
+  } else {
+    libLoaded = false;
+    st.textContent = '';
+    list.innerHTML = LIB_BOOKS[libCat].map((b, i) =>
+      `<div class="bookCard" data-i="${i}"><div class="bt">${b.t}</div><div class="ba">${b.a} · 青空文庫</div></div>`).join('');
+    list.querySelectorAll('.bookCard').forEach(card => card.addEventListener('click', async () => {
+      const b = LIB_BOOKS[libCat][+card.dataset.i];
+      st.textContent = '本を取得中… fetching the book (can take a few seconds)…';
+      try{
+        const book = await (await fetch('/reading/book?url=' + encodeURIComponent(b.url))).json();
+        st.textContent = '';
+        if (book.error){ st.textContent = book.error; return; }
+        enterReading(book.title || (b.t + ' — ' + b.a), book.segs);
+      }catch(e){ st.textContent = 'book fetch failed: ' + e.message; }
+    }));
+  }
+}
+
+/* ================= wizard bubble nav (bottom-left) ================= */
 const headerEl = document.querySelector('header');
-let lastY = 0;
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  if (y < 80) headerEl.classList.remove('hide');
-  else if (y > lastY + 4) headerEl.classList.add('hide');
-  else if (y < lastY - 4) headerEl.classList.remove('hide');
-  lastY = y;
-}, {passive: true});
-$('#topZone').addEventListener('mouseenter', () => headerEl.classList.remove('hide'));
-headerEl.addEventListener('mouseenter', () => headerEl.classList.remove('hide'));
+const navBubble = $('#navBubble');
+let navTimer;
+function openNav(){ clearTimeout(navTimer); document.body.classList.add('navopen'); }
+function closeNavSoon(){ clearTimeout(navTimer); navTimer = setTimeout(() => document.body.classList.remove('navopen'), 400); }
+navBubble.addEventListener('mouseenter', openNav);
+navBubble.addEventListener('mouseleave', closeNavSoon);
+navBubble.addEventListener('click', () => document.body.classList.toggle('navopen'));
+headerEl.addEventListener('mouseenter', openNav);
+headerEl.addEventListener('mouseleave', closeNavSoon);
 
 /* ================= scenario stories ================= */
 const STORIES = {
@@ -1192,21 +1795,26 @@ function renderStoryChips(){
     ch.addEventListener('click', () => loadStory(ch.dataset.k, STORIES[ch.dataset.k])));
 }
 renderStoryChips();
-async function loadStory(title, text){
-  const parts = text.replace(/\s+/g, '').split(/(?<=[。！？])/).filter(s => s.trim());
-  if (!parts.length) return;
-  segments = parts.map(p => ({t: -1, text: p}));
+async function enterReading(title, segs){
+  segments = segs;
   $('#fallback').style.display = 'none';
   $('#playerWrap').style.display = 'none';
+  $('#suggest').innerHTML = '';
+  setBgArt(null);
   logEl.innerHTML = ''; logEl.style.display = 'none';
   $('#vtitle').textContent = title;
   showTab('read');
   await loadTokenizer();
   setStatus('');
   renderBook();
-  $('#vmeta').textContent = `${sentences.length} sentences · story mode`;
+  $('#vmeta').textContent = `${sentences.filter(s => s.text).length} sentences · reading mode`;
   deck = []; queue = [];
   loadJLPT().then(() => { buildDeck(); rebuildQueue(); });
+}
+async function loadStory(title, text){
+  const parts = text.replace(/\s+/g, '').split(/(?<=[。！？])/).filter(s => s.trim());
+  if (!parts.length) return;
+  enterReading(title, parts.map(p => ({t: -1, text: p})));
 }
 $('#loadStoryBtn').addEventListener('click', () => {
   const t = $('#customStory').value.trim();
@@ -1270,13 +1878,12 @@ setInterval(() => {
   }
 }, 250);
 let curWordEl = null;
-function highlightCurrentWord(){
-  if (curWordEl){ curWordEl.classList.remove('wcur'); curWordEl = null; }
-  if (activeIdx < 0) return;
+function estimateCurrentWordSpan(){
+  if (activeIdx < 0) return null;
   const el = book.querySelector(`.sent[data-i="${activeIdx}"]`);
-  if (!el) return;
+  if (!el) return null;
   const ws = el.querySelectorAll('.w');
-  if (!ws.length) return;
+  if (!ws.length) return null;
   let prog = 0;
   const st = sentences[activeIdx].t;
   if (player && playerReady && st >= 0){
@@ -1286,8 +1893,288 @@ function highlightCurrentWord(){
     if (en === null) en = st + 6000;
     prog = Math.min(0.98, Math.max(0, (now - st) / Math.max(600, en - st)));
   }
-  curWordEl = ws[Math.min(ws.length - 1, Math.floor(prog * ws.length))];
-  curWordEl.classList.add('wcur');
+  return ws[Math.min(ws.length - 1, Math.floor(prog * ws.length))];
+}
+function highlightCurrentWord(){
+  if (curWordEl){ curWordEl.classList.remove('wcur'); curWordEl = null; }
+  const w = estimateCurrentWordSpan();
+  if (!w) return;
+  curWordEl = w;
+  w.classList.add('wcur');
+  w.scrollIntoView({block: 'center', behavior: 'smooth'}); // locate = bring into view
+}
+
+/* ---------- KANJI LENS (L key): zoomed full-screen detail, ←/→ to browse ---------- */
+const lens = {open: false, idx: -1, token: 0};
+function kanjiSpans(){ return [...book.querySelectorAll('.w.kj')]; }
+function openLens(){
+  const list = kanjiSpans();
+  if (!list.length) return;
+  const near = nearestKanjiSpan();
+  lens.idx = Math.max(0, near ? list.indexOf(near) : 0);
+  lens.open = true;
+  lens.hoverMode = false; // opened by key → stays until closed explicitly
+  clearTimeout(lens.closeTimer);
+  document.body.classList.add('lens');
+  lensShow();
+}
+function openLensFor(w){
+  const idx = kanjiSpans().indexOf(w);
+  if (idx >= 0) lens.idx = idx;
+  lens.open = true;
+  lens.hoverMode = true;                 // opened by hovering → auto-close on mouse move
+  const r = w.getBoundingClientRect();   // remember where the cursor was
+  lens.ox = r.left + r.width / 2;
+  lens.oy = r.top + r.height / 2;
+  clearTimeout(lens.closeTimer);
+  document.body.classList.add('lens');
+  lensShow(idx >= 0 ? null : w); // kana-only words are shown directly
+}
+function closeLens(){
+  lens.open = false;
+  lens.hoverMode = false;
+  lens.token++;
+  clearTimeout(lens.closeTimer);
+  document.body.classList.remove('lens');
+  stopWordAudio();
+  hoverResumeSoon(); // if hover-pause froze the video, resume from the word
+}
+$('#lensView').addEventListener('click', e => { if (e.target.closest('#lensLeft') || e.target.id === 'lensView') closeLens(); });
+/* hover mode: ANY real mouse movement instantly returns to normal mode
+   (tiny 8px dead zone only to swallow the jitter of the opening hover) */
+$('#lensView').addEventListener('mousemove', e => {
+  if (!lens.open || !lens.hoverMode) return;
+  if (Math.hypot(e.clientX - lens.ox, e.clientY - lens.oy) > 8) closeLens();
+});
+function stepLens(d){
+  const list = kanjiSpans();
+  if (!list.length) return;
+  lens.hoverMode = false; // arrow navigation means "I want to stay here"
+  clearTimeout(lens.closeTimer);
+  lens.idx = (lens.idx + d + list.length) % list.length;
+  lensShow();
+}
+$('#lensExit').addEventListener('click', closeLens);
+async function lensShow(spanOverride){
+  const list = kanjiSpans();
+  const w = spanOverride || list[lens.idx];
+  if (!w) return;
+  const token = ++lens.token;
+  const base = w.dataset.base;
+  const lw = $('#lensWord');
+  lw.textContent = w.textContent;
+  // the word owns the whole left half of the screen
+  lw.style.fontSize = `min(62vh, ${Math.min(38, 42 / Math.max(1, w.textContent.length))}vw)`;
+  $('#lensReading').textContent = w.dataset.reading || '';
+  const posJP = (w.dataset.pos || '').split(',')[0];
+  const jl = jlptLookup(base, w.textContent, w.dataset.reading);
+  const count = list.filter(x => x.dataset.base === base).length;
+  $('#lensBadges').innerHTML =
+    (jl ? `<span class="p-pos">${jl.level.toUpperCase()}</span>` : '') +
+    (POS_EN[posJP] ? `<span class="p-pos">${posJP} · ${POS_EN[posJP]}</span>` : '') +
+    `<span class="p-pos">${lens.idx + 1} / ${list.length}</span>`;
+  $('#lensFreq').textContent = `appears ${count}× in this text`;
+  $('#lensSenses').innerHTML = '<span style="color:var(--dim)">検索中… looking up…</span>';
+  const img = $('#lensImg');
+  img.style.display = 'none'; img.removeAttribute('src');
+  // real pronunciation, silent if unavailable — respects the 音声 toggle
+  stopWordAudio();
+  if (LOCAL && audioChk.checked){
+    curAudio = new Audio('/audio?kanji=' + encodeURIComponent(base) + '&kana=' + encodeURIComponent(w.dataset.reading || ''));
+    curAudio.play().catch(() => { curAudio = null; });
+  }
+  // per-kanji breakdown: meanings, readings, strokes, and radical components
+  const kbox = $('#lensKanji');
+  kbox.innerHTML = '';
+  const chars = [...new Set(w.textContent.match(/[一-龯々]/g) || [])];
+  if (chars.length && LOCAL){
+    fetch('/kanji?chars=' + encodeURIComponent(chars.join('')))
+      .then(r => r.json())
+      .then(j => {
+        if (token !== lens.token || !j.kanji) return;
+        kbox.innerHTML = j.kanji.map(k => `
+          <div class="lk-card">
+            <div class="lk-char">${k.char}</div>
+            <div class="lk-info">
+              <div class="lk-meta">${[k.strokes && k.strokes + ' strokes', k.jlpt, k.grade && 'grade ' + k.grade].filter(Boolean).join(' · ')}</div>
+              ${k.meanings.length ? `<div class="lk-mean">${k.meanings.join(', ')}</div>` : ''}
+              ${k.on.length ? `<div class="lk-read"><b>音</b>${k.on.join('、')}</div>` : ''}
+              ${k.kun.length ? `<div class="lk-read"><b>訓</b>${k.kun.join('、')}</div>` : ''}
+              ${k.radicals.length ? `<div class="lk-rad">${k.radicals.map(r => `<span>${r}</span>`).join('')}</div>` : ''}
+            </div>
+          </div>`).join('');
+      })
+      .catch(() => {});
+  }
+  const entry = await lookup(base);
+  if (token !== lens.token) return;
+  if (entry && entry.senses.length){
+    if (entry.reading && !w.dataset.reading) $('#lensReading').textContent = kata2hira(entry.reading);
+    $('#lensSenses').innerHTML = entry.senses.map((s, i) =>
+      `<div class="sense"><span class="n">${i + 1}</span><span>${s.gloss}${s.pos ? `<span class="sp">${s.pos}</span>` : ''}</span></div>`).join('');
+  } else if (jl && jl.meaning){
+    $('#lensSenses').innerHTML = `<div class="sense"><span class="n">1</span><span>${jl.meaning}</span></div>`;
+  } else {
+    $('#lensSenses').innerHTML = '<span style="color:var(--dim)">辞書に見つかりませんでした — not found</span>';
+  }
+  const gloss = entry && entry.senses[0] ? entry.senses[0].gloss : (jl ? jl.meaning : '');
+  const src = await findImage(base, gloss);
+  if (token !== lens.token || !src) return;
+  img.onload = () => { img.style.display = 'block'; };
+  img.src = src;
+}
+
+/* ---------- live kanji tracking: IMI autoscroll + 集中 super-focus ---------- */
+let soloLast = null, imiLastNow = null, imiSeen = 0;
+function nearestKanjiSpan(){
+  const w = estimateCurrentWordSpan();
+  if (!w) return null;
+  if (w.classList.contains('kj')) return w;
+  // walk outward within the sentence to the closest kanji word
+  const sent = w.closest('.sent');
+  if (!sent) return null;
+  const list = [...sent.querySelectorAll('.w')];
+  const kjs = list.map((el, i) => ({el, i})).filter(x => x.el.classList.contains('kj'));
+  if (!kjs.length) return null;
+  const at = list.indexOf(w);
+  kjs.sort((a, b) => Math.abs(a.i - at) - Math.abs(b.i - at));
+  return kjs[0].el;
+}
+async function tickLiveKanji(){
+  const soloOn = document.body.classList.contains('solo');
+  const imiOn = document.body.classList.contains('klist');
+  if (!soloOn && !imiOn) return;
+  const kw = nearestKanjiSpan();
+  if (!kw) return;
+  const base = kw.dataset.base;
+
+  if (soloOn && base !== soloLast){
+    soloLast = base;
+    const sw = $('#soloWord');
+    sw.textContent = kw.textContent;
+    // dynamic sizing: short words huge, long words scaled to fit the screen
+    const len = Math.max(1, kw.textContent.length);
+    sw.style.fontSize = `min(34vh, ${Math.min(24, 86 / len)}vw)`;
+    $('#soloReading').textContent = kw.dataset.reading || '';
+    $('#soloMeaning').textContent = '…';
+    const entry = await lookup(base);
+    if (soloLast !== base) return;
+    const jl = jlptLookup(base, kw.textContent, kw.dataset.reading);
+    $('#soloMeaning').textContent = (jl ? '[' + jl.level.toUpperCase() + '] ' : '') +
+      ((entry && entry.senses.length) ? entry.senses[0].gloss : (jl && jl.meaning ? jl.meaning : '—'));
+    if (entry && entry.reading && !kw.dataset.reading) $('#soloReading').textContent = kata2hira(entry.reading);
+  }
+
+  if (imiOn && base !== imiLastNow){
+    imiLastNow = base;
+    imiSeen++;
+    const grid = $('#imiGrid');
+    if (!grid) return;
+    const wcells = [...grid.querySelectorAll('.imi-w')];
+    const mcells = [...grid.querySelectorAll('.imi-m')];
+    let hit = -1;
+    wcells.forEach((c, i) => {
+      const isNow = c.firstChild && c.firstChild.textContent === kw.textContent;
+      c.classList.toggle('now', isNow);
+      if (mcells[i]) mcells[i].classList.toggle('now', isNow);
+      if (isNow) hit = i;
+    });
+    grid.classList.toggle('hasnow', hit >= 0);
+    // scroll only after every 4 kanji, not on each one — keeps the page calm
+    if (hit >= 0 && $('#autoscroll').checked && imiSeen % 4 === 0)
+      wcells[hit].scrollIntoView({block: 'center', behavior: 'smooth'});
+  }
+}
+setInterval(tickLiveKanji, 180); // fast tick so the kanji flips in step with the audio
+
+/* ---------- eyes-closed review: b = previous word, n = next word ----------
+   Pauses the video, speaks the word (Japanese) + its meaning (English),
+   then resumes playback automatically if no further key is pressed.
+   Pressing b/n mid-speech skips straight to that word. */
+const review = {active: false, ptr: -1, token: 0, resumeTimer: null};
+function allWordSpans(){ return [...book.querySelectorAll('.w')]; }
+/* real human pronunciation (JapanesePod101 via local server) with TTS fallback */
+let curAudio = null;
+const audioMiss = new Set();
+function stopWordAudio(){ if (curAudio){ try{ curAudio.pause(); }catch(e){} curAudio = null; } }
+function playWordAudio(word, reading){
+  return new Promise(async resolve => {
+    stopWordAudio();
+    const key = word + '|' + (reading || '');
+    if (LOCAL && !audioMiss.has(key)){
+      const a = new Audio('/audio?kanji=' + encodeURIComponent(word) + '&kana=' + encodeURIComponent(reading || ''));
+      curAudio = a;
+      a.onended = () => { curAudio = null; resolve(true); };
+      a.onerror = async () => {
+        audioMiss.add(key); curAudio = null;
+        await speakText(word, 'ja-JP'); resolve(false);
+      };
+      a.play().catch(async () => {
+        audioMiss.add(key); curAudio = null;
+        await speakText(word, 'ja-JP'); resolve(false);
+      });
+      return;
+    }
+    await speakText(word, 'ja-JP');
+    resolve(false);
+  });
+}
+function speakText(text, lang){
+  return new Promise(res => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    const vs = speechSynthesis.getVoices();
+    const v = vs.find(x => x.lang === lang) || vs.find(x => (x.lang || '').startsWith(lang.slice(0, 2)));
+    if (v) u.voice = v;
+    u.onend = res; u.onerror = res;
+    speechSynthesis.speak(u);
+  });
+}
+async function reviewSpeak(){
+  const words = allWordSpans();
+  if (!words.length) return;
+  review.ptr = Math.max(0, Math.min(words.length - 1, review.ptr));
+  const w = words[review.ptr];
+  const token = ++review.token;          // invalidates any speech in progress
+  speechSynthesis.cancel();
+  stopWordAudio();
+  clearTimeout(review.resumeTimer);
+  if (curWordEl) curWordEl.classList.remove('wcur');
+  curWordEl = w; w.classList.add('wcur');
+  w.scrollIntoView({block: 'center', behavior: 'smooth'});
+  await playWordAudio(w.dataset.base, w.dataset.reading);
+  if (token !== review.token) return;
+  const entry = await lookup(w.dataset.base);
+  if (token !== review.token) return;
+  const meaning = (entry && entry.senses.length)
+    ? entry.senses[0].gloss.split(';').slice(0, 2).join(', ')
+    : 'meaning not found';
+  await speakText(meaning, 'en-US');
+  if (token !== review.token) return;
+  review.resumeTimer = setTimeout(() => endReview(true), 1500); // no key → resume video
+}
+function startOrStepReview(dir){
+  if (!('speechSynthesis' in window)) return;
+  const words = allWordSpans();
+  if (!words.length) return;
+  if (!review.active){
+    review.active = true;
+    if (player && playerReady && player.getPlayerState && player.getPlayerState() === 1) player.pauseVideo();
+    const cur = estimateCurrentWordSpan();
+    review.ptr = cur ? words.indexOf(cur) : 0;   // first press: the word that just played
+  } else {
+    review.ptr += dir;
+  }
+  reviewSpeak();
+}
+function endReview(resume){
+  review.token++;
+  review.active = false;
+  clearTimeout(review.resumeTimer);
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  stopWordAudio();
+  if (curWordEl){ curWordEl.classList.remove('wcur'); curWordEl = null; }
+  if (resume && player && playerReady) player.playVideo();
 }
 
 /* ================= main load flow ================= */
@@ -1296,49 +2183,41 @@ async function loadVideo(){
   if (!vid){ setStatus('有効なYouTube URLを入力してください — that doesn\'t look like a YouTube link.'); return; }
   $('#fallback').style.display = 'none';
   book.innerHTML = ''; $('#vtitle').textContent = ''; $('#vmeta').textContent = '';
+  $('#suggest').innerHTML = '';
   segments = []; sentences = []; deck = []; queue = []; activeIdx = -1;
   logEl.innerHTML = '';
   dlog('video id: ' + vid);
   showTab('read');
   try{
-    let segs = null;
-    if (LOCAL){
-      setStatus('字幕を取得中… fetching subtitles via local server…');
-      const r = await fetch('/subs?v=' + vid);
-      const j = await r.json();
-      (j.log || []).forEach(l => dlog(l, 'err'));
-      if (j.title) $('#vtitle').textContent = j.title;
-      if (j.segs && j.segs.length){
-        segs = j.segs;
-        dlog(`✓ subtitles: ${segs.length} lines via ${j.source}`, 'ok');
-      } else {
-        throw new Error(j.error || 'subtitle fetch failed');
-      }
-    } else {
-      setStatus('動画ページを取得中… fetching video page…');
-      let html = null, tracks = null;
+    if (!LOCAL) throw new Error('サーバーが必要です — start the server first: node nihongo_flow_server.js (or paste subtitles manually below).');
+    let j = null;
+    if (subSrcSel.value === 'whisper'){
+      setStatus('🎙 Whisperで文字起こし中… high-accuracy AI transcription.\nFirst run downloads the audio + a speech model — can take a few minutes. Cached afterwards.');
+      dlog('whisper transcription requested…');
       try{
-        html = await proxyFetch('https://www.youtube.com/watch?v=' + vid + '&hl=ja', 'youtube watch page');
-        const tm = html.match(/<title>(.*?)<\/title>/);
-        if (tm) $('#vtitle').textContent = tm[1].replace(/ - YouTube$/, '').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
-        tracks = extractTracks(html);
-        dlog(tracks ? `caption tracks: ${tracks.length}` : 'no captionTracks in page', tracks ? 'ok' : 'err');
-      }catch(e){ dlog('watch page unavailable', 'err'); }
-      if (tracks && tracks.length){
-        setStatus('字幕を取得中… fetching subtitles…');
-        segs = await fetchSegsBrowser(pickTrack(tracks));
-      }
-      if (!segs && html && (!tracks || !tracks.length)) throw new Error('この動画には字幕がありません。No captions on this video — pick one with Japanese CC, or paste subtitles manually below.');
-      if (!segs) throw new Error('字幕の取得に失敗しました。Subtitle fetch was blocked — run the local server (node nihongo_flow_server.js) for reliable fetching, or paste the transcript manually below.');
-      dlog(`✓ subtitles parsed: ${segs.length} lines`, 'ok');
+        const r = await fetch('/transcribe?v=' + vid);
+        const wj = await r.json();
+        if (wj.error){ dlog('whisper: ' + wj.error, 'err'); dlog('falling back to YouTube subtitles…'); }
+        else j = wj;
+      }catch(e){ dlog('whisper failed: ' + e.message, 'err'); }
     }
-    segments = segs;
+    if (!j){
+      setStatus('字幕を取得中… fetching subtitles…');
+      j = await (await fetch('/subs?v=' + vid)).json();
+    }
+    (j.log || []).forEach(l => dlog(l, 'err'));
+    if (j.title) $('#vtitle').textContent = j.title;
+    if (!j.segs || !j.segs.length) throw new Error(j.error || 'subtitle fetch failed');
+    dlog(`✓ subtitles: ${j.segs.length} lines via ${j.source}`, 'ok');
+    segments = j.segs;
     await loadTokenizer();
     setStatus('');
     renderBook();
-    $('#vmeta').textContent = `${sentences.length} sentences · click any sentence to play from there · space = highlight current word`;
+    $('#vmeta').textContent = `${sentences.length} sentences · source: ${j.source || '?'} · space = play/pause · j = highlight word · l = lens · b/n = audio review · k = kanji mode · ←/→ = seek`;
     logEl.style.display = 'none';
     mountPlayer(vid);
+    setBgArt(vid);
+    loadSuggestions(vid);
     loadJLPT().then(() => { buildDeck(); rebuildQueue(); });
   }catch(err){
     dlog('FAILED: ' + err.message, 'err');
@@ -1349,6 +2228,28 @@ async function loadVideo(){
 }
 $('#loadBtn').addEventListener('click', loadVideo);
 $('#url').addEventListener('keydown', e => { if (e.key === 'Enter') loadVideo(); });
+
+/* ---------- suggested videos (related to the loaded one) ---------- */
+async function loadSuggestions(vid){
+  const box = $('#suggest');
+  box.innerHTML = '';
+  if (!LOCAL) return;
+  try{
+    const j = await (await fetch('/related?v=' + vid)).json();
+    if (!j.videos || !j.videos.length) return;
+    box.innerHTML = '<div class="sg-title">おすすめ SUGGESTED VIDEOS</div>' +
+      j.videos.map(v =>
+        `<div class="sgCard" data-id="${v.id}" title="${v.title.replace(/"/g, '&quot;')}">
+           <img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="">
+           <div class="t">${v.title}</div>
+         </div>`).join('');
+    box.querySelectorAll('.sgCard').forEach(ch => ch.addEventListener('click', () => {
+      $('#url').value = 'https://www.youtube.com/watch?v=' + ch.dataset.id;
+      loadVideo();
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }));
+  }catch(e){}
+}
 
 /* ================= manual paste ================= */
 $('#parseBtn').addEventListener('click', async () => {

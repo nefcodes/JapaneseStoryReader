@@ -1,3 +1,10 @@
 jmdict-index.json
 jlpt-local.json
 .DS_Store
+react-node-version/
+kanjidic-index.json
+krad-index.json
+INTERVIEW.md
+Nihongo Flow Explanation.md
+*.wav
+*.bin
