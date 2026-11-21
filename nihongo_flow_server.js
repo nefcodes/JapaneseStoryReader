@@ -487,7 +487,12 @@ async function getSubs(vid) {
     const j = JSON.parse(fs.readFileSync(cf, 'utf8'));
     return { title: j.title || '', segs: j.segs, source: 'demo · ' + (j.source || 'saved'), log: [] };
   }
-  return fetchSubsLive(vid);
+  if (!CLOUD) return fetchSubsLive(vid);
+  const BLOCKED = { error: 'cloud-blocked', title: '', log: [] };
+  return Promise.race([
+    fetchSubsLive(vid).then(r => (r.segs && r.segs.length) ? r : BLOCKED),
+    new Promise(res => setTimeout(() => res(BLOCKED), 12000)),
+  ]);
 }
 async function fetchSubsLive(vid) {
   const log = [];
@@ -682,6 +687,7 @@ function sendJson(res, obj, code = 200) {
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, `http://localhost:${PORT}`);
   try {
+    if (u.pathname === '/config') return sendJson(res, { cloud: CLOUD });
     if (u.pathname === '/demos') return sendJson(res, { videos: listDemos() });
     if (u.pathname === '/subs') {
       const vid = u.searchParams.get('v') || '';

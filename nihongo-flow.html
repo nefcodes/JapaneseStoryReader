@@ -558,6 +558,7 @@
 
 <span class="hint">Paste a YouTube video with Japanese captions. Read along like a book — click a sentence to jump the video there, hover any word for meaning + picture. Then open the Cards tab to drill every word as flashcards filtered by JLPT level (N5–N1) or rarity, so you can pre-learn the vocabulary and listen with confidence.</span></div>
   <div id="demos" style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0"></div>
+  <div style="margin:-2px 0 10px"><a href="#" id="ownSubsLink" style="font-size:12px;color:var(--dim)">＋ Use your own video + subtitle file (.srt / .vtt / .ass …)</a></div>
   <div id="log"></div>
 
   <div id="readView">
@@ -565,7 +566,8 @@
     <div id="imiView"></div>
     <div id="suggest"></div>
     <div id="fallback">
-      <p>Couldn't auto-fetch subtitles? Paste them manually (SRT, YouTube transcript panel text, or plain Japanese lines) and press Parse. On YouTube: ⋯ → 文字起こしを表示 / Show transcript → copy.</p>
+      <p><b>Add your own subtitles</b> — enter the YouTube link above, then upload a subtitle file (.srt, .vtt, .ass, .sbv, .txt) or paste the text and press Parse. The text syncs with the video.<br>Tip: on YouTube, ⋯ → 文字起こしを表示 / Show transcript → copy and paste here.</p>
+      <label id="subFileLbl" style="display:inline-block;margin-bottom:10px;padding:8px 14px;border-radius:999px;border:1px solid var(--panel-border);background:var(--panel);color:var(--text);cursor:pointer;font-size:13px">📄 Upload subtitle file<input type="file" id="subFile" accept=".srt,.vtt,.ass,.ssa,.sbv,.sub,.txt,.json,text/*" style="display:none"></label>
       <textarea id="manualText" placeholder="00:00:01,000 --> 00:00:04,000&#10;こんにちは、今日は東京の天気について話します。"></textarea>
       <button id="parseBtn">Parse subtitles</button>
     </div>
@@ -781,6 +783,12 @@ audioChk.addEventListener('change', () =>
   localStorage.setItem('nf-audioon', audioChk.checked ? '1' : '0'));
 const subSrcSel = $('#subSrcSel');
 subSrcSel.value = localStorage.getItem('nf-subsrc') === 'whisper' ? 'whisper' : 'yt';
+if (LOCAL) fetch('/config').then(r => r.json()).then(c => {
+  if (!c.cloud) return;
+  window.NF_CLOUD = true;
+  subSrcSel.value = 'yt';
+  subSrcSel.style.display = 'none';
+}).catch(() => {});
 subSrcSel.addEventListener('change', () =>
   localStorage.setItem('nf-subsrc', subSrcSel.value));
 const kanjiChk = $('#kanjiChk');
@@ -1259,7 +1267,7 @@ function positionPopup(w){
 function mountPlayer(vid){
   $('#playerWrap').style.display = 'block';
   if (player && playerReady && curVid !== vid){ player.cueVideoById(vid); curVid = vid; return; }
-  if (player) return;
+  if (player){ if (curVid !== vid){ curVid = vid; window.__pendingVid = vid; } return; }
   curVid = vid;
   const tag = document.createElement('script');
   tag.src = 'https://www.youtube.com/iframe_api';
@@ -1268,7 +1276,7 @@ function mountPlayer(vid){
     player = new YT.Player('player', {
       width: 336, height: 189, videoId: vid,
       playerVars: {playsinline: 1, rel: 0},
-      events: {onReady: () => { playerReady = true; }}
+      events: {onReady: () => { playerReady = true; if (window.__pendingVid){ player.cueVideoById(window.__pendingVid); window.__pendingVid = null; } }}
     });
   };
 }
@@ -2223,7 +2231,6 @@ async function loadVideo(){
       setStatus('字幕を取得中… fetching subtitles…');
       j = await (await fetch('/subs?v=' + vid)).json();
     }
-    (j.log || []).forEach(l => dlog(l, 'err'));
     if (j.title) $('#vtitle').textContent = j.title;
     if (!j.segs || !j.segs.length) throw new Error(j.error || 'subtitle fetch failed');
     dlog(`✓ subtitles: ${j.segs.length} lines via ${j.source}`, 'ok');
@@ -2238,10 +2245,16 @@ async function loadVideo(){
     loadSuggestions(vid);
     loadJLPT().then(() => { buildDeck(); rebuildQueue(); });
   }catch(err){
-    dlog('FAILED: ' + err.message, 'err');
-    setStatus(err.message);
+    if (/cloud-blocked|all routes failed|字幕を取得できません/.test(err.message)){
+      logEl.innerHTML = ''; logEl.style.display = 'none';
+      setStatus('この動画の字幕は自動取得できませんでした。\nYouTube doesn\'t let this online server fetch subtitles automatically — the video is loaded, just add its subtitles below (upload a .srt/.vtt file or paste the transcript) and they will play in sync. Or try one of the demos.');
+    } else {
+      dlog('FAILED: ' + err.message, 'err');
+      setStatus(err.message);
+    }
     $('#fallback').style.display = 'block';
     mountPlayer(vid);
+    $('#fallback').scrollIntoView({behavior: 'smooth', block: 'center'});
   }
 }
 $('#loadBtn').addEventListener('click', loadVideo);
@@ -2270,12 +2283,63 @@ async function loadSuggestions(vid){
 }
 
 /* ================= manual paste ================= */
+function parseSubtitleText(raw){
+  const text = raw.replace(/^\uFEFF/, '').replace(/\r/g, '');
+  const clean = s => s.replace(/<[^>]+>/g, '').replace(/\{\\[^}]*\}/g, '').replace(/\\[Nn]/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+  const out = [];
+  const push = (t, txt) => { txt = clean(txt); if (txt && !(out.length && out[out.length-1].text === txt)) out.push({t, text: txt}); };
+  // YouTube json3 / NihongoFlow json
+  if (/^\s*[\[{]/.test(text)){
+    try{
+      const j = JSON.parse(text);
+      if (j.events){ j.events.forEach(e => e.segs && push(Math.round(e.tStartMs || 0), e.segs.map(x => x.utf8 || '').join(''))); return out; }
+      if (j.segs || Array.isArray(j)){ (j.segs || j).forEach(x => push(+x.t || 0, x.text || '')); return out; }
+    }catch(e){}
+  }
+  // ASS / SSA
+  if (/^\s*\[Script Info\]/m.test(text) || /^Dialogue:/m.test(text)){
+    for (const l of text.split('\n')){
+      const m = l.match(/^Dialogue:\s*[^,]*,(\d+):(\d{2}):(\d{2})[.:](\d{1,3}),[^,]*,(?:[^,]*,){6}(.*)$/);
+      if (m) push((+m[1]*3600 + +m[2]*60 + +m[3])*1000 + +(m[4] + '00').slice(0, 3), m[5]);
+    }
+    return out.sort((a, b) => a.t - b.t);
+  }
+  // cue-based: SRT, WebVTT, SBV
+  const cueRe = /(?:(\d+):)?(\d{1,2}):(\d{2})[,.](\d{1,3})\s*(?:-->|,)\s*(?:\d+:)?\d{1,2}:\d{2}[,.]\d{1,3}/;
+  if (cueRe.test(text)){
+    for (const block of text.split(/\n\s*\n/)){
+      const lines = block.trim().split('\n');
+      const ti = lines.findIndex(l => cueRe.test(l));
+      if (ti < 0) continue;
+      const m = lines[ti].match(cueRe);
+      push((+(m[1] || 0)*3600 + +m[2]*60 + +m[3])*1000 + +(m[4] + '00').slice(0, 3), lines.slice(ti + 1).join(' '));
+    }
+    return out;
+  }
+  return null; // not a timed format — handled by the transcript/plain-text parser
+}
+$('#ownSubsLink').addEventListener('click', e => {
+  e.preventDefault();
+  $('#fallback').style.display = 'block';
+  showTab('read');
+  const vid = parseId($('#url').value.trim());
+  if (vid) mountPlayer(vid);
+  setStatus(vid ? 'Now upload or paste the subtitles for this video.' : 'Paste a YouTube link in the box above, then upload or paste its subtitles below.');
+  $('#fallback').scrollIntoView({behavior: 'smooth', block: 'center'});
+});
+$('#subFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  $('#manualText').value = await f.text();
+  e.target.value = '';
+  $('#parseBtn').click();
+});
 $('#parseBtn').addEventListener('click', async () => {
   const text = $('#manualText').value.trim();
   if (!text) return;
-  const segs = [];
+  let segs = parseSubtitleText(text) || [];
   const srtRe = /(\d{1,2}):(\d{2}):(\d{2})[,.](\d{3})/;
-  if (srtRe.test(text)){
+  if (segs.length){ /* parsed as a subtitle file */ }
+  else if (srtRe.test(text)){
     for (const block of text.split(/\n\s*\n/)){
       const lines = block.trim().split('\n');
       const ti = lines.findIndex(l => srtRe.test(l));
@@ -2300,6 +2364,8 @@ $('#parseBtn').addEventListener('click', async () => {
     if (!anyTime) segs.forEach(s => s.t = -1);
   }
   if (!segs.length){ setStatus('解析できませんでした — could not parse that text.'); return; }
+  const pvid = parseId($('#url').value.trim());
+  if (pvid){ mountPlayer(pvid); setBgArt(pvid); }
   segments = segs;
   await loadTokenizer();
   setStatus('');
