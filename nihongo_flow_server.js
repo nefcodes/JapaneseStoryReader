@@ -74,7 +74,41 @@ const JMDICT_URLS = [
   'https://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz',
   'http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz',
 ];
-let dict = null;          // { word: [reading, gloss1, gloss2] }
+/* Memory-light dictionary: one sorted "key\treading\tgloss1\tgloss2" buffer
+   (~34 MB, outside the JS heap) + line offsets, searched by binary search.
+   Bundled pre-built in data/jmdict.tsv.gz so small cloud servers never parse the XML. */
+const DICT_TSV = path.join(DIR, 'data', 'jmdict.tsv.gz');
+const bundled = name => path.join(DIR, 'data', name + '.gz');
+let dict = null;          // { buf, off: Uint32Array } once loaded
+function loadDictBuffer(buf) {
+  let n = 1;
+  for (let i = buf.indexOf(10); i !== -1; i = buf.indexOf(10, i + 1)) n++;
+  const off = new Uint32Array(n);
+  let k = 1;
+  for (let i = buf.indexOf(10); i !== -1; i = buf.indexOf(10, i + 1)) off[k++] = i + 1;
+  dict = { buf, off };
+}
+function dictGet(word) {
+  if (!dict || !word) return null;
+  const key = Buffer.from(word, 'utf8'), { buf, off } = dict;
+  let lo = 0, hi = off.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1, s = off[mid], tab = buf.indexOf(9, s);
+    const c = Buffer.compare(buf.subarray(s, tab), key);
+    if (c === 0) {
+      const end = mid + 1 < off.length ? off[mid + 1] - 1 : buf.length;
+      const p = buf.toString('utf8', tab + 1, end).split('\t');
+      return [p[0] || '', p[1] || '', p[2] || ''];
+    }
+    if (c < 0) lo = mid + 1; else hi = mid - 1;
+  }
+  return null;
+}
+function readJsonMaybeBundled(file, name) {
+  if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (fs.existsSync(bundled(name))) return JSON.parse(zlib.gunzipSync(fs.readFileSync(bundled(name))).toString('utf8'));
+  return null;
+}
 let jlptLocal = null;     // { word: {level, reading, meaning} }
 let dictStatus = 'not started';
 
@@ -159,8 +193,8 @@ async function buildJlptLocal() {
 async function ensureData() {
   try {
     // JLPT lists
-    if (fs.existsSync(JLPT_FILE)) {
-      jlptLocal = JSON.parse(fs.readFileSync(JLPT_FILE, 'utf8'));
+    jlptLocal = readJsonMaybeBundled(JLPT_FILE, 'jlpt-local.json');
+    if (jlptLocal) {
       console.log(`✓ JLPT lists loaded from disk (${Object.keys(jlptLocal).length} entries)`);
     }
     if (!jlptLocal || Object.keys(jlptLocal).length < 1000) {
@@ -176,11 +210,11 @@ async function ensureData() {
       }
     }
     // JMdict
-    if (fs.existsSync(DICT_FILE)) {
+    if (fs.existsSync(DICT_TSV)) {
       dictStatus = 'loading from disk';
-      dict = JSON.parse(fs.readFileSync(DICT_FILE, 'utf8'));
+      loadDictBuffer(zlib.gunzipSync(fs.readFileSync(DICT_TSV)));
       dictStatus = 'ready';
-      console.log(`✓ JMdict dictionary loaded from disk (${Object.keys(dict).length} forms)`);
+      console.log(`✓ JMdict dictionary loaded (${dict.off.length} forms, compact)`);
     } else {
       dictStatus = 'downloading JMdict (~12 MB)…';
       console.log('downloading full JMdict dictionary (~12 MB, one time only)…');
@@ -193,10 +227,15 @@ async function ensureData() {
       console.log('parsing dictionary (takes ~10-30s)…');
       const xml = zlib.gunzipSync(buf).toString('utf8');
       const { index, count } = parseJMdict(xml);
-      dict = index;
-      fs.writeFileSync(DICT_FILE, JSON.stringify(index));
+      const clean = x => (x || '').replace(/[\t\n\r]/g, ' ');
+      const keys = Object.keys(index).filter(Boolean).map(k => [Buffer.from(clean(k)), k]);
+      keys.sort((a, b) => Buffer.compare(a[0], b[0]));
+      const tsv = Buffer.from(keys.map(([, k]) => [clean(k), ...index[k].slice(0, 3).map(clean)].join('\t')).join('\n'));
+      fs.mkdirSync(path.dirname(DICT_TSV), { recursive: true });
+      fs.writeFileSync(DICT_TSV, zlib.gzipSync(tsv));
+      loadDictBuffer(tsv);
       dictStatus = 'ready';
-      console.log(`✓ JMdict ready: ${count} entries, ${Object.keys(index).length} lookup forms → jmdict-index.json`);
+      console.log(`✓ JMdict ready: ${count} entries, ${dict.off.length} lookup forms → data/jmdict.tsv.gz`);
     }
   } catch (e) {
     dictStatus = 'error: ' + e.message;
@@ -251,8 +290,8 @@ async function grabFirst(urls, asBuffer) {
 }
 async function ensureKanjiData() {
   try {
-    if (fs.existsSync(KANJIDIC_FILE)) {
-      kanjiDic = JSON.parse(fs.readFileSync(KANJIDIC_FILE, 'utf8'));
+    kanjiDic = readJsonMaybeBundled(KANJIDIC_FILE, 'kanjidic-index.json');
+    if (kanjiDic) {
       console.log(`✓ kanji dictionary loaded from disk (${Object.keys(kanjiDic).length} characters)`);
     } else {
       console.log('downloading KANJIDIC2 kanji dictionary (~1.5 MB, one time)…');
@@ -261,8 +300,8 @@ async function ensureKanjiData() {
       fs.writeFileSync(KANJIDIC_FILE, JSON.stringify(kanjiDic));
       console.log(`✓ kanji dictionary ready (${Object.keys(kanjiDic).length} characters)`);
     }
-    if (fs.existsSync(KRAD_FILE)) {
-      krad = JSON.parse(fs.readFileSync(KRAD_FILE, 'utf8'));
+    krad = readJsonMaybeBundled(KRAD_FILE, 'krad-index.json');
+    if (krad) {
       console.log(`✓ radical decompositions loaded from disk (${Object.keys(krad).length} kanji)`);
     } else {
       console.log('downloading radical decompositions (KRADFILE)…');
@@ -632,7 +671,7 @@ const server = http.createServer(async (req, res) => {
     if (u.pathname === '/dict') {
       const word = u.searchParams.get('word') || '';
       if (!dict) return sendJson(res, { found: false, status: dictStatus });
-      const hit = dict[word] || dict[normJP(word)];
+      const hit = dictGet(word) || dictGet(normJP(word));
       const jl = jlptLocal && (jlptLocal[normJP(word)] || null);
       if (!hit && !jl) return sendJson(res, { found: false, status: 'ready' });
       return sendJson(res, {
@@ -729,7 +768,7 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, { kanji: out, status: kanjiStatus });
     }
     if (u.pathname === '/dictstatus') {
-      return sendJson(res, { status: dictStatus, jlpt: !!jlptLocal, forms: dict ? Object.keys(dict).length : 0 });
+      return sendJson(res, { status: dictStatus, jlpt: !!jlptLocal, forms: dict ? dict.off.length : 0 });
     }
     if (u.pathname === '/proxy') {
       const target = u.searchParams.get('url');

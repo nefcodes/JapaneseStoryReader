@@ -1,10 +1,10 @@
 {
   "name": "nihongoflow",
   "version": "1.0.0",
-  "description": "Japanese immersion reader — YouTube subtitles as a book, hover dictionary, JLPT flashcards, AI stories",
+  "description": "Japanese immersion reader \u2014 YouTube subtitles as a book, hover dictionary, JLPT flashcards, AI stories",
   "main": "nihongo_flow_server.js",
   "scripts": {
-    "start": "node nihongo_flow_server.js"
+    "start": "node --max-old-space-size=256 nihongo_flow_server.js"
   },
   "engines": {
     "node": ">=18"
