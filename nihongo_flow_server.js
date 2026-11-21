@@ -470,7 +470,26 @@ async function alternativeFrontends(vid, log) {
   return null;
 }
 
+/* Saved demo subtitles in data/subs/<videoId>.json — served instantly, and they
+   work on cloud hosts where YouTube blocks live subtitle fetching. */
+const SUBS_DIR = path.join(DIR, 'data', 'subs');
+function listDemos() {
+  try {
+    return fs.readdirSync(SUBS_DIR).filter(f => /^[\w-]{11}\.json$/.test(f)).map(f => {
+      const j = JSON.parse(fs.readFileSync(path.join(SUBS_DIR, f), 'utf8'));
+      return { id: f.slice(0, 11), title: j.title || f.slice(0, 11) };
+    });
+  } catch { return []; }
+}
 async function getSubs(vid) {
+  const cf = path.join(SUBS_DIR, vid + '.json');
+  if (fs.existsSync(cf)) {
+    const j = JSON.parse(fs.readFileSync(cf, 'utf8'));
+    return { title: j.title || '', segs: j.segs, source: 'demo · ' + (j.source || 'saved'), log: [] };
+  }
+  return fetchSubsLive(vid);
+}
+async function fetchSubsLive(vid) {
   const log = [];
   let title = '';
   const sources = [];
@@ -663,6 +682,7 @@ function sendJson(res, obj, code = 200) {
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, `http://localhost:${PORT}`);
   try {
+    if (u.pathname === '/demos') return sendJson(res, { videos: listDemos() });
     if (u.pathname === '/subs') {
       const vid = u.searchParams.get('v') || '';
       if (!/^[\w-]{11}$/.test(vid)) return sendJson(res, { error: 'bad video id' }, 400);

@@ -557,6 +557,7 @@
 本のように続くテキストを読みながら自然な日本語を聴けます。文をクリックするとその場面に飛び、単語にカーソルを合わせると意味と画像が表示されます。「単語 Cards」タブで動画の全単語をJLPTレベル別のフラッシュカードで先に学べます。
 
 <span class="hint">Paste a YouTube video with Japanese captions. Read along like a book — click a sentence to jump the video there, hover any word for meaning + picture. Then open the Cards tab to drill every word as flashcards filtered by JLPT level (N5–N1) or rarity, so you can pre-learn the vocabulary and listen with confidence.</span></div>
+  <div id="demos" style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0"></div>
   <div id="log"></div>
 
   <div id="readView">
@@ -2178,6 +2179,23 @@ function endReview(resume){
 }
 
 /* ================= main load flow ================= */
+/* demo videos with saved subtitles (instant, and work on the live site) */
+function loadDemos(){
+  if (!LOCAL) return;
+  fetch('/demos').then(r => r.json()).then(j => {
+    const box = $('#demos'); if (!box || !j.videos || !j.videos.length) return;
+    box.innerHTML = '<span style="font-size:12px;opacity:.7;align-self:center">▶ Try a demo:</span>';
+    for (const v of j.videos){
+      const b = document.createElement('button');
+      const name = v.title.replace(/^Comprehensible Japanese( Beginner)?\s*-\s*/i, '').replace(/\s*\/\s*Japanese Listening Practice$/i, '');
+      b.textContent = name; b.title = v.title;
+      b.style.cssText = 'font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--panel-border);background:var(--panel);color:var(--text);cursor:pointer';
+      b.onclick = () => { $('#url').value = 'https://www.youtube.com/watch?v=' + v.id; loadVideo(); };
+      box.appendChild(b);
+    }
+  }).catch(() => {});
+}
+if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', loadDemos); else loadDemos();
 async function loadVideo(){
   const vid = parseId($('#url').value.trim());
   if (!vid){ setStatus('有効なYouTube URLを入力してください — that doesn\'t look like a YouTube link.'); return; }
