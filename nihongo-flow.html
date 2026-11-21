@@ -783,7 +783,7 @@ audioChk.addEventListener('change', () =>
   localStorage.setItem('nf-audioon', audioChk.checked ? '1' : '0'));
 const subSrcSel = $('#subSrcSel');
 subSrcSel.value = localStorage.getItem('nf-subsrc') === 'whisper' ? 'whisper' : 'yt';
-if (LOCAL) fetch('/config').then(r => r.json()).then(c => {
+if (location.protocol.startsWith('http')) fetch('/config').then(r => r.json()).then(c => {
   if (!c.cloud) return;
   window.NF_CLOUD = true;
   subSrcSel.value = 'yt';
